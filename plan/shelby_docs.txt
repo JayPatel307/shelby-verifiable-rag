@@ -1,0 +1,5395 @@
+# Examples (/examples)
+
+TBD
+
+
+# Introduction (/protocol)
+
+Shelby is a high-performance decentralized blob storage system designed for demanding read-heavy workloads.
+
+Workloads such as video streaming, AI training and inference, and large-scale data analytics require robust storage, significant capacity, and high read bandwidth at reasonable prices, all while maintaining control over their data.
+To deliver these capabilities to users, Shelby uses:
+
+* **Paid reads and user-focused incentive model**. Paying for reads ensure that storage providers deliver good service.
+* **The Aptos blockchain as a coordination and settlement layer**. Aptos provides a high-performance, reliable foundation for managing system state, economic logic, and enforcing BFT.
+* **Dedicated private bandwidth**. Performance is limited and inconsistent over the public internet. Shelby uses a dedicated fiber network to ensure consistent high performance.
+* **A novel auditing system**. Ensures data integrity and rewards honest participation in the network.
+* **Efficient erasure coding**. Minimizes recovery bandwidth, reducing costs, while ensuring data is safely stored.
+* **Built by experienced teams**. The Jump Trading Group and Aptos team both are rich with experience building high performance storage and globally distributed systems.
+
+## Key Components
+
+{/* Just mean to capture the highest level components here that end users need to know about to meaningfully read the rest of docs */}
+
+Users interact primarily with the RPC servers through:
+
+1. Shelby [Typescript SDK](/sdks/typescript)
+2. Shelby [CLI](/tools/cli)
+3. Shelby web applications, such as the [block explorer](https://explorer.shelby.xyz/shelbynet), streaming apps, etc.
+
+The Shelby system consists of the following major components:
+
+1. **Aptos Smart Contract** - manages the state of the system and manages correctness-critical operations, such as auditing for data correctness.
+2. **Storage Provider (SP) servers** - storage servers which store chunks of user data.
+3. **Shelby RPC servers** - used by end users to read and write blobs.
+
+## Why Aptos?
+
+Shelby uses the Aptos blockchain as its coordination and settlement layer because it offers high transaction throughput, low finality times, and a resource-efficient execution model.
+This makes it an ideal foundation for managing Shelby's economic logic, including storage commitments, audit outcomes, and payment channels, without compromising scalability.
+Additionally, the Aptos team brings DNA from Meta's global large-scale platforms, a perfect match for the Shelby project.
+
+## Why Jump Crypto?
+
+Shelby's software stack is not built from scratch; it is founded on engineering principles honed through years of experience developing storage and compute systems for Jump Trading Group's high-performance quantitative research infrastructure.
+This includes expertise in high-performance I/O, efficient concurrency, and low-level code optimizations, allowing Shelby to deliver a system that is both highly scalable and responsive.
+
+{/* blurb about user choice on RPC nodes? or no */}
+
+
+# Quick Start (/protocol/quickstart)
+
+# Using the CLI
+
+Install the CLI following the [CLI quickstart guide](/tools/cli).
+
+For a guided sample of using the CLI follow the `README.md` from the [`shelby/shelby-quickstart`](https://github.com/shelby/shelby-quickstart) GitHub repo.
+
+# Using the Typescript SDK
+
+Follow the [SDK quickstart guide](/sdks/typescript).
+
+# Learn More
+
+* Explore the [architecture overview](/protocol/architecture/overview) to learn more about how Shelby works.
+* Explore the [CLI Commands](/tools/cli/commands/uploads-and-downloads)
+* Explore the [Typescript SDK documentation](/sdks/typescript/core) and [file upload guide](/sdks/typescript/node/guides/uploading-file).
+* Explore the [RPC Server APIs](/apis/rpc)
+
+
+# AI & LLM Integration (/tools/ai-llms)
+
+Shelby documentation provides two methods for programmatic access optimized for AI agents and LLMs.
+
+## Full Documentation Endpoint
+
+Get all documentation in a single plain text file.
+
+```bash
+curl https://docs.shelby.xyz/llms-full.txt
+```
+
+The response includes all pages formatted as:
+
+```text
+# Page Title (URL)
+
+Page content in markdown...
+
+# Next Page Title (URL)
+
+Next page content...
+```
+
+## Markdown Headers for Individual Pages
+
+Request any documentation page as markdown by setting the `Accept` header to `text/markdown`.
+
+```bash
+curl -H "Accept: text/markdown" https://docs.shelby.xyz/docs/quickstart
+```
+
+This works for all documentation sections:
+
+* `/docs/*` - Core documentation
+* `/apis/*` - API references
+* `/protocol/*` - Protocol specifications
+* `/examples/*` - Code examples
+* `/sdks/*` - SDK documentation
+
+
+# Shelby Explorer (/tools/explorer)
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+<Callout type="info">
+  The Shelby Explorer is currently in beta and under active development. Features and functionality may change.
+</Callout>
+
+The **Shelby Explorer** is a web application that provides a user-friendly interface for exploring the Shelby network. Use it to view blob metadata, monitor network activity, and interact with your account.
+
+### Access the Explorer
+
+Visit the Shelby Explorer at: [https://explorer.shelby.xyz](https://explorer.shelby.xyz)
+
+
+# Aptos Tokens (/apis/faucet/aptos)
+
+import AptosFaucet from "@/components/faucet/AptosFaucet";
+
+This faucet is used to fund accounts with APT tokens for development purposes. APT tokens are used to pay gas fees when uploading blobs to the Aptos network.
+
+<AptosFaucet />
+
+
+# ShelbyUSD Tokens (/apis/faucet/shelbyusd)
+
+import ShelbyUSDFaucet from "@/components/faucet/ShelbyUSDFaucet";
+
+This faucet is used to fund accounts with ShelbyUSD tokens for development purposes. ShelbyUSD tokens are used to pay upload
+fees when uploading blobs to the Shelby network.
+
+<ShelbyUSDFaucet />
+
+
+# Shelby RPC API (/apis/rpc)
+
+Choose your network to view the appropriate API documentation:
+
+<Cards>
+  <Card title="Shelbynet" href="/apis/rpc/shelbynet" description="Development network - https://api.shelbynet.shelby.xyz/shelby" />
+
+  <Card title="(Coming Soon) Localhost" href="/apis/rpc/localhost" description="Local development - http://localhost:9090" />
+</Cards>
+
+
+# Networks (/protocol/architecture/networks)
+
+This page is a reference guide for the network urls and capabilities of the available networks.
+To actually use the Shelby network, please follow the [Quickstart](/protocol/quickstart).
+
+# shelbynet
+
+Shelby currently operates a single developer prototype network called `shelbynet`.
+`shelbynet` will be wiped roughly once a week, or faster.
+
+To support `shelbynet`, a new set of Aptos validators is running as well, under the network name of `shelbynet`.
+Use `shelbynet` as the network name when interacting with Aptos Explorer.
+This network is isolated from the Aptos mainnet, Aptos testnet, and Aptos devnet.
+
+## Limits and Capabilities
+
+Storage Capacity: approximately 10 TiB.
+
+## `shelbynet` component URLs and Addresses
+
+| Component       | URL                                                                                        |
+| --------------- | ------------------------------------------------------------------------------------------ |
+| Indexer         | [https://api.shelbynet.shelby.xyz/v1/graphql](https://api.shelbynet.shelby.xyz/v1/graphql) |
+| Shelby RPC      | [https://api.shelbynet.shelby.xyz/shelby](https://api.shelbynet.shelby.xyz/shelby)         |
+| Aptos Full Node | [https://api.shelbynet.shelby.xyz/v1](https://api.shelbynet.shelby.xyz/v1)                 |
+
+The [Shelby Smart Contract](/protocol/architecture/smart-contracts) is deployed by account `0xc63d6a5efb0080a6029403131715bd4971e1149f7cc099aac69bb0069b3ddbf5`.
+See [Aptos Explorer](https://explorer.aptoslabs.com/account/0xc63d6a5efb0080a6029403131715bd4971e1149f7cc099aac69bb0069b3ddbf5?network=shelbynet) to explore this account.
+
+## API Keys
+
+Learn about API keys [here](/sdks/typescript/acquire-api-keys).
+
+## Shelby RPC server
+
+A single RPC server is running for Shelby devnet.
+This server is running in a cloud environment.
+We use a private network configured in the cloud environment to conect the RPC server to the storage providers.
+
+The RPC server is routed to public internet using Geomi, accessible using the URL above.
+
+## Storage Providers
+
+For Shelby devnet, we are running 16 storage providers in a cloud environment.
+These providers are running in a single region, with a private network connecting them.
+Each Storage Provider has 1 TiB of disk.
+
+
+# Overview (/protocol/architecture/overview)
+
+import { Mermaid } from "@/components/mdx/Mermaid";
+
+# Key Components
+
+The Shelby system consists of the following major components:
+
+1. **Aptos Smart Contract** - manages the state of the system and manages correctness-critical operations, such as auditing for data correctness.
+2. **Storage Provider (SP) servers** - storage servers which store chunks of user data.
+3. **Shelby RPC servers** - used by end users to access stored blobs.
+4. **Private Network** - Private fiber network used for internal communication.
+
+Users connect to Shelby by using the SDK to access a Shelby RPC server, over the public internet.
+Shelby RPC servers have both public internet connectivity and private network connectivity.
+The RPC servers will reach Storage Provider servers using this private bandwidth to satisfy user requests.
+
+All actors in the network have access to the Aptos L1 blockchain, which includes the Shelby smart contract.
+Each participant interacts with the smart contract to coordinate their actions.
+
+<Mermaid
+  chart="
+flowchart LR
+User1(SDK User)
+User2(SDK User)
+DZ@{shape: flag, label: Private Network}
+Internet@{shape: flag, label: Public Internet}
+RPC1(Shelby RPC)
+RPC2(Shelby RPC)
+SP1(Storage Provider)
+SP2(Storage Provider)
+SP3(Storage Provider)
+Aptos(Aptos)
+
+RPC1  -.-> Aptos
+RPC2  -.-> Aptos
+User1 -.-> Aptos
+User2 -.-> Aptos
+SP1   -.-> Aptos
+SP2   -.-> Aptos
+SP3   -.-> Aptos
+
+User1 ===> Internet
+User2 ===> Internet
+
+Internet ===> RPC1
+Internet ===> RPC2
+
+RPC1 ===> DZ
+RPC2 ===> DZ
+
+DZ ===> SP1
+DZ ===> SP2
+DZ ===> SP3
+"
+/>
+
+# Accounts and Blob Naming
+
+A user's blobs are stored in a user-specific namespace.
+Shelby uses the hex representation of the Aptos account which is interacting with Shelby as the user namespace.
+A single user can create as many accounts as they want or need.
+Blob names are user-defined, and must be unique within the user's namespace.
+A fully qualified blob name is something like `0x123..../user/defined/path/goes/here.dat`.
+Blob names can be up to 1024 characters, and must not end in `/`.
+
+There are no directories in the system.
+Accounts only hold blob data.
+Note that it is possible to create both `<account>/foo` as a blob and `<account>/foo/bar`.
+
+The [CLI](../tools/cli) and other tools follow a "canonical" directory layout when uploading or downloading local directory-like structures recursively.
+
+That is, if an input directory is laid out as:
+
+```
+$ tree .
+.
+|-- bar
+`-- foo
+    |-- baz
+    `-- buzz
+2 directories, 3 files
+```
+
+The blobs uploaded to Shelby will have these blob names:
+
+```
+<account>/<some-prefix>/bar
+<account>/<some-prefix>/foo/baz
+<account>/<some-prefix>/foo/buzz
+```
+
+Users are still free to later upload `<account>/<some-prefix>/foo` as a separate object.
+However, this violates the canonical structure and would prevent standard tools from being able to recursively download the collection as a single directory.
+
+# Chunking
+
+User data is chunked according to an erasure coding scheme in Shelby.
+Erasure coding allows the system to recover from data loss without storing a large number of extra copies of user data in the system.
+Shelby uses [Clay Codes](https://www.usenix.org/system/files/conference/fast18/fast18-vajha.pdf) as its erasure coding scheme.
+
+User data (blobs) are first split into fixed size "chunksets".
+These chunksets are then erasure coded into "chunks".
+If a user's data size is not a multiple of the chunkset size, the SDK will fill the last chunk with zeros to ensure that chunks are of the appropriate size throughout the system.
+Reads will never return this zero padding, but it will exist internally within the system.
+At this time, chunksets are 10 megabytes of user data and each chunk is 1 megabyte.
+
+<Mermaid
+  chart="
+flowchart LR
+Blob(User Blob)
+Chunkset0(Chunkset 0)
+Chunkset1(Chunkset 1)
+ChunksetN(Chunkset N)
+Chunk0(Chunk 0)
+Chunk1(Chunk 1)
+ChunkN(Chunk N);
+
+Blob --->|Partition| Chunkset0
+Blob --->            Chunkset1
+Blob --->            ChunksetN
+
+Chunkset0 -->|Clay Code|Chunk0
+Chunkset0 -->           Chunk1
+Chunkset0 -->           ChunkN
+"
+/>
+
+Each chunkset contains 16 total chunks in our erasure coding scheme.
+The first 10 of these chunks are the original user data.
+The remaining 6 chunks are "parity" chunks, which contain the data needed to recover chunks lost due to disk or node failure.
+
+<Mermaid
+  chart="
+flowchart LR
+%%{init: {'flowchart': {'nodeSpacing': 1, 'rankSpacing': 1}}}%%
+Chunk0(Chunk 0)
+ChunkDD(Chunk ...)
+Chunk9(Chunk 9)
+
+Chunk10(Chunk 10)
+ChunkPD(Chunk ...)
+Chunk15(Chunk 15)
+
+Chunk0 ~~~ ChunkDD
+ChunkDD ~~~ Chunk9
+
+Chunk9 ~~~ Chunk10
+Chunk10 ~~~ ChunkPD
+ChunkPD ~~~ Chunk15
+
+classDef dataNode fill:green;
+classDef parityNode fill:blue;
+class Chunk0,ChunkDD,Chunk9 dataNode;
+class Chunk10,ChunkPD,Chunk15 parityNode;
+"
+/>
+
+To read/rebuild a block of data, we need to gather 10 chunks of the chunkset.
+These can be the 10 data chunks (as these are the original user data chunks), or any 10 chunks combination of data+parity chunks.
+
+Shelby can also use the Clay Code bandwidth-optimized repair algorithm to recover chunks lost due to disk or node failure.
+This algorithm provides a mechanism to read a chunk from a chunkset without fetching 10 full chunks worth of data.
+Instead it will read a much smaller portion of data from a larger number of servers.
+This optimized repair algorithm can reduce the network traffic during recovery by as much as 4x compared to standard Reed-Solomon erasure coding while preserving the same optimal storage footprint.
+
+# Placement Groups
+
+Shelby uses placement groups to efficiently manage where data is stored across the network without requiring massive metadata overhead.
+Placement groups also allow us to control for data locality, or specify failure domains, in a flexible manner.
+
+Instead of tracking the location of every individual chunk, Shelby assigns each blob to a placement group and stores all of that blob's chunks on the same set of storage providers.
+This dramatically reduces the amount of metadata that must be stored on the Aptos blockchain.
+
+<Mermaid
+  chart="
+flowchart LR
+Blob6(User Blob 6)
+Blob7(User Blob 7)
+BlobN(User Blob N)
+PG0(Placement Group 0)
+PG1(Placement Group 1)
+PGN(Placement Group N)
+SP0(Storage Provider 0)
+SP1(Storage Provider 1)
+SPN(Storage Provider 15)
+Dots1(...)
+DotsN(...);
+
+Blob6 --->|Random Assignment| PG0
+Blob7 --->|Random Assignment| PG1
+BlobN --->|Random Assignment| PGN
+
+PG0 -->|Slot 0|SP0
+PG0 -->|Slot 1|SP1
+PG0 -->|Slot 15|SPN
+
+PG1 --> Dots1
+PGN --> DotsN
+"
+/>
+
+When you store a blob, the Shelby system:
+
+1. Randomly assigns the blob to one of many placement groups for load balancing and data availability
+2. Stores all chunks of the blob across the 16 storage providers in that placement group
+
+Each placement group contains exactly 16 slots for storage providers, matching the erasure coding scheme.
+All chunks from a blob—both the 10 data chunks and 6 parity chunks—are stored on the same set of 16 storage providers.
+
+To read data, the RPC server performing the read looks up which placement group contains the desired blob, then retrieves the chunks from the 16 storage providers assigned to that placement group.
+
+For another example of Placement Group usage, see the [Ceph RADOS paper](https://ceph.com/assets/pdfs/weil-rados-pdsw07.pdf).
+
+# Read Procedure
+
+The following describes what happens in the system when clients request to read data from Shelby:
+
+1. The client selects an available RPC server from the network.
+2. The client establishes a payment mechanism and session with the selected RPC server.
+3. The client sends HTTP requests to the RPC server specifying the desired blob or byte range, along with payment authorization.
+4. (optionally) The RPC server consults a local cache and returns data from local cache if present.
+5. The RPC server queries the smart contract to identify which storage providers hold the chunks for the requested blob.
+6. The RPC server retrieves the necessary chunks from the storage providers over the DoubleZero private network, using a micropayment channel managed by the smart contract to pay the storage provider for the read.
+7. The RPC server validates the chunks against the blob metadata, reassembles the requested data, and returns it to the client.
+8. The client can perform additional reads using the same session, with payments deducted incrementally as data is transferred.
+
+<Mermaid
+  chart="
+sequenceDiagram
+participant User as User/SDK
+participant RPC as RPC Server
+participant SC as Smart Contract
+participant SP as Storage Providers
+
+Note over User: 1. Pick an RPC server
+
+User->>RPC: 2. Open session (and establish payment details)
+RPC-->>User: Session established
+
+User->>RPC: 3. HTTP request to read blob/portion<br/>+ payment information
+
+RPC->>SC: 5. Consult smart contract state<br/>for placement group info
+SC-->>RPC: Return SP locations for blob
+
+RPC->>SP: 6. Fetch required chunks<br/>(over DoubleZero network, using micropayment channel)
+SP-->>RPC: Return chunks
+
+Note over RPC: Validate chunks using<br/>blob metadata
+Note over RPC: Reassemble blob/portion
+
+RPC-->>User: Return reassembled data
+
+loop Additional reads
+User->>RPC: 7. More read requests<br/>(same session, maybe top off funds)
+RPC-->>User: Return data
+Note over User,RPC: Payment deducted from session
+end
+"
+/>
+
+# Write Procedure
+
+The following describes what happens in the system when clients request to write data to Shelby:
+
+1. The client selects an available RPC server from the network.
+2. The SDK computes the erasure coded version of the blob locally, processing chunk-by-chunk to minimize memory usage.
+3. The SDK calculates cryptographic commitments for each erasure coded chunk.
+4. The SDK submits a transaction to the Aptos blockchain containing the blob's metadata and merkle root of chunk commitments. Storage payment is processed on-chain at this point.
+5. The SDK transmits the original, non-erasure-coded data to the RPC server to conserve bandwidth.
+6. The Shelby RPC server independently erasure codes the received data and recomputes chunk commitments to verify consistency with the on-chain metadata.
+7. The RPC server validates that its computed values match the on-chain state.
+8. The RPC server distributes the erasure coded chunks to the assigned storage providers based on the blob's placement group.
+9. Each storage provider validates its received chunk and returns a signed acknowledgment.
+10. The RPC server aggregates the acknowledgments from all storage providers and submits a final transaction to the smart contract.
+11. The smart contract transitions the blob to "written" state, confirming it is durably stored and available for reads.
+
+<Mermaid
+  chart="
+sequenceDiagram
+participant SDK as User/SDK
+participant RPC as Shelby RPC Server
+participant Aptos as Aptos RPC Server
+participant SC as Smart Contract
+participant SP as Storage Providers
+
+Note over SDK: 1. Select an available RPC server
+
+Note over SDK: 2. Compute erasure coded chunks
+
+Note over SDK: 3. Compute chunk commitments<br/>for all erasure coded chunks
+
+SDK->>Aptos: 4. Invoke smart contract with<br/>blob metadata and merkle root
+Aptos->>SC: Process transaction
+SC-->>Aptos: Deduct payment, store metadata
+Aptos-->>SDK: Transaction confirmed
+
+SDK->>RPC: 5. Send original (non-erasure coded) data
+Note over SDK,RPC: Saves bandwidth
+
+Note over RPC: 6. Erasure code the blob<br/>and recompute chunk commitments
+
+RPC<<->>Aptos: 7. Verify computed values match<br/>on-chain metadata
+
+RPC->>SP: 8. Send chunks to assigned SPs<br/>(determined by placement group)
+SP-->>RPC: 9. Return signed acknowledgments
+
+Note over RPC: Aggregate SP commitments
+
+RPC->>SC: 10. Submit transaction with<br/>aggregated commitments
+SC-->>RPC: Transition blob to 'written' state
+Note over SC: Blob marked as durably stored<br/>and ready to serve
+"
+/>
+
+
+# RPCs (/protocol/architecture/rpcs)
+
+The Shelby Protocol uses RPC servers as the primary user-facing protocol access layer.
+A reference implementation, in typescript, of the RPC server exposes a straightforward blob read/write interface, handles Aptos L1 interactions, and interacts with Storage Providers on behalf of end users.
+
+The client SDK works natively with the reference implementation endpoints.
+When reading blobs, it is also possible to interact directly with the HTTP endpoints in situations where it would be complicated to use the SDK.
+
+We anticipate value-add RPC services which will build off additional features for specialized usage on top of the reference implementation for example, RPC servers could transform data, process data, cache data, etc.
+
+# RPC Server Responsibilities
+
+The RPC server exposes friendly HTTP REST APIs to read and write data to and from Storage Provider servers.
+RPC servers will have a user-facing network interface(s) (typically the public internet) and private network facing network interface(s).
+
+### Core Features
+
+* HTTP endpoints: RESTful blob storage APIs with support for standard operations, range requests, and multipart uploads.
+* Provide user-friendly payment mechanisms and session management.
+* Storage Provider connection management: Keep these connections healthy and functioning well, gracefully handle loss of storage providers.
+* Erasure coding and commitment calculations: Done as part of the read and write workflows.
+* Blockchain integration: Interact with Aptos L1 to inspect blob/chunk state and carry out operations.
+
+### Reading Data
+
+The interface exposed for reading is designed to be flexible and composable with other systems.
+The RPC supports plain `HTTP GET` to fetch entire blobs as well as range requests for advanced usage and concurrent downloads.
+See the full read path detailed in the [Overview](./overview.mdx) for interactions between components.
+
+The RPC server provides graceful degradation when Storage Providers are unavailable, automatically falling back to parity chunks and providing clear error responses when operations cannot be completed.
+
+#### Request Hedging
+
+Future implementations will include request hedging, which is over-requesting data from Storage Providers and using the first set of valid responses received to reply to the end user.
+This technique is particularly effective in distributed systems where tail latency can be highly variable.
+
+For example, if we need 10 of 16 chunks in our chunkset to answer the user, we can request 14 chunks and use the first 10 full replies to reply at lower client-facing latency.
+Careful network congestion management and traffic prioritization is required for this technique to be effective.
+
+### Writing Data
+
+To write data, the client SDK is the primary interface.
+The client SDK interacts with the RPC server to perform these writes.
+See the full write path as detailed in the [Overview](./overview.mdx) for full system interaction.
+
+Internal to the SDK and RPC, we support both HTTP PUT and multi-part uploads, which are helpful when large files need to be uploaded over potentially flaky connections (parts can be retried).
+
+# Performance Notes
+
+The RPC server implementation prioritizes performance through several key architectural decisions that minimize latency, reduce memory usage, and maximize throughput under varying load conditions.
+
+## Streaming Data Pipeline
+
+As clients upload blobs, the RPC server begins processing data immediately as it arrives, rather than waiting for complete uploads.
+The data path uses streams, ensuring that data flows through the system without large buffers and latency bubbles.
+When data is transformed (i.e. erasure coded), it is done so as a part of this data path in small streaming chunks.
+This approach provides several benefits:
+
+* Reduced time-to-first-byte.
+* Constant memory usage per connection, allowing a higher connection count and high levels of concurrency.
+
+## Connection Pooling and Reuse
+
+Storage Provider connections are maintained in a connection pool.
+These connections are able to be reused for many concurrent requests through request tracking mechanisms in the protocol.
+Pooling the connections keeps latency low (no time spent establishing connections) keeps flow control state fresh (no cold start ramp up period as the protocol estimates channel properties).
+
+## Resource Management
+
+Other techniques are in use to control resource usage, including:
+
+* Bounded queues: Connection pools and processing queues have fixed capacities to prevent memory exhaustion during traffic spikes.
+* Backpressure handling: When Storage Providers or network connections become congested, the system applies backpressure up the chain rather than buffering unlimited data.
+* Garbage collection: Sessions, pending uploads, and cached metadata are automatically expired to prevent resource leaks during long-running operations.
+
+## Scalability
+
+To scale horizontally, the reference RPC server public interfaces and internals are mostly stateless.
+Session management requires some database state, currently handled by local persistent databases.
+All other portions of read and write requests supported by the RPC server are stateless.
+This allows easy horizontal scaling, more instances can be added and requests sharded/load-balanced across them without much trouble.
+
+Because the small amount of persistent session state is carefully managed, these RPC servers can also be started, stopped, and restarted seamlessly.
+
+# Monitoring, Observability, and Operational Considerations
+
+Every request receives a unique correlation ID that flows through all system components, enabling distributed tracing of complex operations that span multiple Storage Providers and blockchain interactions.
+This tracing capability is essential for debugging performance issues and understanding system behavior under load.
+
+The RPC server exposes operational metrics including request latency, Storage Provider connection health, throughput statistics, and error rates through standard monitoring interfaces.
+
+
+# Smart Contracts (/protocol/architecture/smart-contracts)
+
+Shelby's coordination and settlement processes are underpinned by Aptos smart contracts
+that act as the system's single source of truth.
+All critical state -- including storage commitments, audit outcomes, micropayment channel metadata, and system
+participation -- is managed and updated on-chain through these contracts.
+Maintaining a single on-chain state streamlines interactions among system components (Storage Providers, RPCs, SDKs).
+
+## Blob Metadata
+
+The [overview](/protocol/architecture/overview) shows how the system interacts with the smart contract during the read and write of blobs.
+Each of these flows interacts with the blob metadata stored in the smart contract.
+
+### Write Path
+
+Metadata for a blob is initialized when the SDK submits the transaction to register the blob.
+The user provides the blob and its name to the SDK.
+The SDK computes then sends a cryptographic blob commitment, along with payment and encoding information, to the smart contract
+as a signed Aptos transaction. (The construction of the blob commitment allows both simple verification
+of chunk contents by storage providers and small proofs during audits.)
+
+The smart contract executes the transaction: it takes payment
+of the write according to the current prices of the blob size and length of expiration;
+it assigns the blob to a placement group, which defines the set of storage providers that will store erasure coded
+chunks of the blob.
+
+The metadata is then updated when storage providers store data.
+Once a storage provider has stored a chunk, it produces a signed acknowledgement of the stored
+chunk and sends this to the RPC server, which aggregates and adds the acknowledgements on-chain.
+(If the RPC is unresponsive, the storage provider can send the acknowledgement directly on-chain.)
+When enough acknowledgements are registered with the smart contract,
+it transitions the blob to "written" state, confirming it is durably stored and available for reads.
+
+### Read Path
+
+On the read path, the blob metadata is accessed by the SDK and RPC by directly reading the smart contract state
+or reading derived information via an indexer.
+The read path does not require updates to the on-chain state, which is necessary
+for low latency and high throughput.
+
+## Micropayments
+
+Shelby deploys a micropayment channel smart contract, which is used by RPC servers to pay storage provider for reads.
+The micropayment channel only requires an on-chain update for creation and settlement, and all intermediate
+payments are guaranteed by the sender's signature, which the receiver can settle in bulk on-chain.
+These optimistic payments allow the read requests to occur fast without on-chain overheads.
+
+## System participation
+
+The smart contract manages the set of storage providers, placement groups,
+and the mapping of storage providers to placement group slots.
+Storage providers join and leave the system by submitting transactions to the smart contract; when executed
+the smart contract updates the placement group slots to reflect the new set of providers.
+
+## Audits
+
+Data is periodically audited within Shelby, to reward storage providers for storing data, and to
+punish any storage provider that reneges on their storage promises.
+
+When the blob is registered, the write payment is deposited into the smart contract.
+Only storage providers that have acknowledged writes are paid the write payments, at regular audit intervals.
+If a storage provider claims to have written a blob but cannot produce a succinct proof of that write
+to a smart contract audit, it is penalized. More details on the formalation of audits are available in the
+[whitepaper](/protocol/architecture/white-paper).
+
+
+# Storage Providers (/protocol/architecture/storage-providers)
+
+import { Mermaid } from "@/components/mdx/Mermaid";
+
+The Storage Provider nodes store data for the Shelby network.
+
+## Cavalier
+
+Cavalier is the Jump Crypto reference implementation of the protocol's Storage Provider.
+The Cavalier client is a high performance C codebase, written using utilities open sourced as part of the [firedancer](https://github.com/firedancer-io/firedancer) project.
+
+## Tiles
+
+Modern CPUs contain large numbers of cores.
+These cores communicate over local networks, and their caches use sophisticated algorithms to coordinate across the cache hierarchy[^chips].
+The relationship between local cpu caches, local-socket memory, and remote cpu caches, must be carefully managed by programmers to have any hope of extracting high performance from these systems.
+
+[^chips]: See [AMD's CCX architecture](https://chipsandcheese.com/p/pushing-amds-infinity-fabric-to-its)
+
+Multi-threaded applications struggle with this complexity, leaving performance on the table, or worse, experiencing unpredictable performance due to cache conflicts and NUMA penalties.
+Cavalier leverages a "tile" architecture in which application components run in isolated processes, on dedicated CPU cores, and communicate through shared memory, to avoid these struggles.
+
+Building the system around communicating tiles means:
+
+* Explicit Communication: Moving data between cores is explicit, avoiding performance surprises.
+* Resource Locality: A tile controls its core's caches. Explicit core scheduling prevents interference by other processes and threads.
+* Isolation: Tile state is isolated. Security-sensitive tiles can run in sandboxes; hiding their sensitive state from the rest of the system.
+
+The tile model echoes other popular programming approaches seen in languages like erlang and go (independent actors communicating over channels), and frameworks like [Seastar](https://seastar.io/) which embrace the shared-nothing-with-message-passing pattern.
+
+## Workspaces
+
+Cavalier uses a shared memory management concept called a "workspace."
+Workspaces implement the shared memory infrastructure that enables tile communication.
+A workspace is a section of shared memory that is (usually) backed by huge pages (for TLB efficiency) and is created in a cpu topology aware manner.
+A workspace can hold sections of application state, shared memory queues, shared memory data buffers, and even dynamic memory allocators (which allocate within a section of the workspace).
+Workspaces hold information about their layout, allowing debugging tools to inspect state and (where appropriate) allowing tiles to hold persistent state in their workspace across application restarts.
+
+# Kinds of Tiles
+
+Tile-architecture applications tend to end up with a few different kinds of tiles:
+
+* Application Logic: Implement core business logic and track some local state.
+* State Management: Own application wide databases. Respond to queries over shared memory, and often persist key data in their workspaces.
+* Hardware Interfacing: Manage network cards, network connections, disks, etc. Implement kernel bypass networking primitives, perform networking stack work, multiplex across many hard drives, etc.
+* Message routing and multiplexing: Load balance across shared application or state tiles, join queues with robust and consistent ordering, etc.
+
+The pattern does not impose an event model for tiles, each can use an appropriate event model for their purpose.
+For example a tile managing a large number of TCP sessions may want an event-driven epoll-style loop, but something managing hardware might want to spin while polling hardware registers.
+
+# Cavalier Tiles
+
+Cavalier creates a small number of tiles (potentially many copies of each):
+
+1. System tile - General orchestration, metrics reporting, status checking.
+2. Server tile(s) - Manage communication with RPC nodes.
+3. Engine tile - Manage access to local drives.
+4. Aptos client tile - Connect to aptos services to gather L1 state and provide SP-local access to relevant state.
+
+<Mermaid
+  chart="
+flowchart LR
+
+DZ@{shape: flag, label: Private Network}
+RPC(RPC nodes)
+Indexer(Aptos Indexer)
+
+subgraph Storage Provider
+Client(Aptos L1 Client and Local Metadata Database)
+Engine(Storage Engine)
+Server(RPC Node Communication Manager)
+
+D1@{ shape: lin-cyl, label: 'Disk 1' }
+DD@{ shape: lin-cyl, label: 'Disk ...' }
+DN@{ shape: lin-cyl, label: 'Disk N' }
+end
+
+Engine <--> D1
+Engine <--> DD
+Engine <--> DN
+
+Engine <-->|MD requests| Client
+Server <-->|MD requests| Client
+
+Client -->|Expirations| Engine
+
+RPC <--> DZ
+DZ <--> Server
+
+Client <--> Indexer
+"
+/>
+
+Cavalier at current size has a minimal footprint, but as the system scales up, we are designing components such that scaling is possible.
+For example:
+
+* As RPC connection requirements grow, we can add more server tiles.
+* As local metadata grows in size, we can shard access across multiple Aptos client tiles.
+
+## Engine Tile (Drive Interaction)
+
+The engine tile manages all physical storage operations using `io_uring` for high-performance asynchronous I/O across multiple drives.
+We maintain separate read and write queues (of fixed depths) per drive, allowing fine-tuned control over I/O concurrency based on each drive's characteristics.
+The hard drives have minimal partition tables, and we use direct I/O to bypass page cache, providing predictable performance.
+
+The tile listens for I/O requests from other tiles and enqueues requests to the drives (assuming the drive queues are not exceeded).
+As I/O completions occur, responses are sent back to the server tile through shared memory queues.
+
+## Server Tile
+
+The server tile implements a single-threaded event-driven `epoll` style event loop to manage multiple concurrent TCP connections.
+The tile communicates with both the client and engine tiles through shared memory queues, forwarding metadata validation requests to the client tile and actual I/O operations to the engine tile.
+
+The tile tracks each connected client (RPC node), and runs a lightweight protocol using protobufs for communication.
+Each connection maintains dedicated incoming and outgoing buffers, with ring buffers used for outgoing data to gracefully handle partial writes when the network becomes congested, and some backpressure managment business logic.
+
+## Aptos Blockchain Client Tile
+
+The Aptos client tile sends HTTP requests (using `libcurl`) to an Aptos Indexer to fetch L1 state, then maintains a database of blobs and chunks that the Storage Provider is responsible for.
+The tile responds to metadata requests from the other tiles, acting like a local database.
+Addionally, as blobs relevant to this Storage Provider expire, the client tile will inform the engine tile that chunks are ready for deletion.
+
+{/*## Operator Notes? */}
+
+
+# Token Economics (/protocol/architecture/token-economics)
+
+# The Economics of Shelby
+
+*Full Tokenomics of the Shelby protocol, including initial distribution, will be published later.*
+
+## Overview
+
+The Shelby network uses both a native token and stablecoins:
+
+* **Shelby token** or **Stablecoins** for user payments
+* **Shelby token** as an internal unit for staking, rewards, and governance
+
+***
+
+## Payment and Conversion Flow
+
+1. **User Payments**
+   * Users pay for storage and read operations in stablecoins or Shelby token.
+   * User read fees are routed directly to the relevant RPC Operators. RPCs use paymentchannels for reading data from SPs.
+   * User storage fees are routed through the protocol on chain.
+
+2. **Conversion to native tokens**
+   * The protocol programmatically converts those storage fees that were paid in stablecoins into Shelby tokens on the open market.
+   * Accumulated Shelby tokens form the source of rewards to Storage Providers (SPs).
+
+3. **Reward Release**
+   * SPs are rewarded in the native token.
+   * Rewards are released gradually and are conditioned on successful audit outcomes.
+   * The release schedule ensures storage integrity and aligns rewards with verified service.
+
+4. **Burns**
+   * A predefined fraction of each conversion is permanently burned.
+
+***
+
+## Staking and Roles
+
+### Storage Providers (SPs)
+
+* Must stake the native token to operate and earn rewards.
+* Storage tasks and reward eligibility are proportional to the individual stake.
+
+### RPC Operators
+
+* Stake to access additional benefits (e.g., pricing tiers and read routing).
+
+### Delegators
+
+* Can delegate native tokens to SPs or RPC Operators to share in their rewards.
+
+***
+
+## Protocol Fund
+
+The **Protocol Fund** is governed by the community.
+
+**Sources:**
+
+* A predefined fraction of collected usage fees.
+* Portion of genesis allocation.
+
+**Uses (among others):**
+
+* Delegation to high-performing operators.
+* Retroactive public goods funding (RetroPGF).
+* Ongoing protocol development and maintenance.
+
+***
+
+## Supply and Emissions
+
+* Total token supply is capped. (No perpetual inflation.)
+* Bootstrap rewards for early participants taper over time and are stake-weighted.
+* Initial allocation with locked releases.
+* RetroPGF distributions are determined through governance rather than algorithmic issuance.
+
+***
+
+Shelby tokenomics structure links storage activity, reward issuance, and supply restrictions within a single closed economic loop.
+
+
+# White Paper (/protocol/architecture/white-paper)
+
+import { ExternalLink } from 'lucide-react';
+
+## Full PDF Versions
+
+The Shelby white paper provides an in-depth technical overview of the protocol's architecture, design decisions, and implementation details.
+
+<Cards>
+  <Card title="🇺🇸 English (en-US)" href="https://shelby.xyz/whitepaper.pdf" description="Original White Paper PDF in English" className="relative" external>
+    <ExternalLink className="absolute top-4 right-4 size-4 text-fd-muted-foreground" />
+  </Card>
+</Cards>
+
+## Abstract
+
+Existing decentralized storage protocols fall short of the service required by real-world applications.
+Their throughput, latency, cost-effectiveness, and availability are insufficient for demanding workloads
+such as video streaming, large-scale data analytics, or AI training. As a result, Web3 data-intensive
+applications are predominantly dependent on centralized infrastructure.
+
+Shelby is a high-performance decentralized storage protocol designed to meet demanding needs. It
+achieves fast, reliable access to large volumes of data while preserving decentralization guarantees. The
+architecture reflects lessons from Web2 systems: it separates control and data planes, uses erasure coding
+with low replication overhead and minimal repair bandwidth, and operates over a dedicated backbone
+connecting RPC and storage nodes. Reads are paid, which incentivizes good performance. Shelby also
+introduces a novel auditing protocol that provides strong cryptoeconomic guarantees without compromising
+performance, a common limitation of other decentralized solutions. The result is a decentralized
+system that brings Web2-grade performance to production-scale, read-intensive Web3 applications.
+
+
+# Getting Started (/sdks/media-player)
+
+# Shelby Media Player
+
+The Shelby Media Player is a lightweight React wrapper around Shaka Player for adaptive HLS/DASH streaming. This comprehensive reference covers all available components, hooks, and classes.
+
+## Installation
+
+<CodeBlockTabs defaultValue="npm">
+  <CodeBlockTabsList>
+    <CodeBlockTabsTrigger value="npm">
+      npm
+    </CodeBlockTabsTrigger>
+
+    <CodeBlockTabsTrigger value="pnpm">
+      pnpm
+    </CodeBlockTabsTrigger>
+
+    <CodeBlockTabsTrigger value="yarn">
+      yarn
+    </CodeBlockTabsTrigger>
+
+    <CodeBlockTabsTrigger value="bun">
+      bun
+    </CodeBlockTabsTrigger>
+  </CodeBlockTabsList>
+
+  <CodeBlockTab value="npm">
+    ```bash
+    npm install @shelby-protocol/player
+    ```
+  </CodeBlockTab>
+
+  <CodeBlockTab value="pnpm">
+    ```bash
+    pnpm add @shelby-protocol/player
+    ```
+  </CodeBlockTab>
+
+  <CodeBlockTab value="yarn">
+    ```bash
+    yarn add @shelby-protocol/player
+    ```
+  </CodeBlockTab>
+
+  <CodeBlockTab value="bun">
+    ```bash
+    bun add @shelby-protocol/player
+    ```
+  </CodeBlockTab>
+</CodeBlockTabs>
+
+## Prerequisites
+
+The Shelby Media Player requires **TailwindCSS 4** to be installed in your project for the default styles to work.
+
+### Setting up TailwindCSS
+
+Add the following line to your `globals.css` file:
+
+```css
+@source "../node_modules/@shelby-protocol/player";
+```
+
+Alternatively, you can import the shadcn styles file directly:
+
+```css
+@import "@shelby-protocol/player/styles/shadcn.css";
+```
+
+## Quick Start
+
+### Basic Usage
+
+The simplest way to use the player is with the `SimpleShakaVideoPlayer` component and the default layout:
+
+```tsx
+import { SimpleShakaVideoPlayer, VideoOutlet, Poster, DefaultLayout } from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <DefaultLayout />
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+### Custom Layout
+
+You can also build a custom player layout using the primitive components:
+
+```tsx
+import {
+  Controls,
+  ControlsGroup,
+  FullscreenButton,
+  PlayButton,
+  VolumeButton,
+  MediaTime,
+  MediaTitle,
+  TimeSlider,
+  usePlayer,
+} from "@shelby-protocol/player";
+
+function CustomLayout() {
+  const { containerRef } = usePlayer();
+
+  return (
+    <Controls>
+      <div className="flex-1" />
+      <ControlsGroup className="px-4 w-full">
+        <TimeSlider />
+      </ControlsGroup>
+      <ControlsGroup className="p-1 pt-0">
+        <PlayButton />
+        <VolumeButton />
+        <MediaTime />
+        <MediaTitle />
+        <div className="flex-1" />
+        <FullscreenButton />
+      </ControlsGroup>
+    </Controls>
+  );
+}
+```
+
+
+# Acquire API Keys (/sdks/typescript/acquire-api-keys)
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+# API Keys
+
+API keys authenticate your app and manage rate limits when using Shelby services. Without one, your client runs in "anonymous" mode with much lower limits, which can affect performance.
+
+## Overview
+
+API keys provide several important benefits:
+
+* **Authentication**: Securely identify your application to Shelby services.
+* **Rate Limiting**: Access higher request limits for better application performance.
+* **Usage Tracking**: Monitor your API consumption and optimize usage patterns.
+* **Service Access**: Enable access to premium features and enhanced service tiers.
+
+## Acquiring API Keys
+
+To obtain your API keys, you'll need to create an API resource through the Geomi platform:
+
+### Step-by-Step Guide
+
+<Steps>
+  <Step>
+    ### Navigate to Geomi
+
+    Visit [geomi.dev](https://geomi.dev) in your web browser.
+  </Step>
+
+  <Step>
+    ### Account Setup
+
+    Log in to your existing account or create a new account if you haven't
+    already.
+  </Step>
+
+  <Step>
+    ### Create API Resource
+
+    On the overview page, click the "API Resource" card to begin creating a
+    new resource.
+  </Step>
+
+  <Step>
+    ### Configure Resource
+
+    Complete the configuration form with the following settings:
+
+    * **Network**: Select `Shelbynet` from the available network options.
+    * **Resource Name**: Provide a descriptive name for your API resource.
+    * **Usage Description**: Briefly describe your intended use case.
+  </Step>
+
+  <Step>
+    ### Generate Keys
+
+    Once submitted, your API keys will be generated and displayed.
+
+    **Note**: By default the site generates a key for use in a private server context. If you intend to use the key in a frontend context, create a client key.
+  </Step>
+</Steps>
+
+Learn more about API keys at the Geomi [API keys](https://geomi.dev/docs/api-keys) and [billing](https://geomi.dev/docs/admin/billing) pages.
+
+## Implementing API Keys
+
+### Basic Configuration
+
+Integrate your API key into the Shelby client configuration as shown below:
+
+```ts
+import { Network } from "@aptos-labs/ts-sdk";
+import { ShelbyNodeClient } from "@shelby/sdk";
+
+const client = new ShelbyNodeClient({
+  network: Network.SHELBYNET,
+  apiKey: "aptoslabs_***", // Replace with your actual API key
+});
+```
+
+Or into an Aptos client:
+
+```ts
+import { Network, AptosConfig, Aptos } from "@aptos-labs/ts-sdk";
+
+const aptosConfig = new AptosConfig({
+ network: Network.SHELBYNET,
+ clientConfig : {
+  API_KEY: "aptoslabs_***", // Replace with your actual API key
+ }
+})
+const aptosClient = new Aptos(aptosConfig)
+
+```
+
+
+# Acquire shelbyUSD and APT Tokens (/sdks/typescript/fund-your-account)
+
+Fund your account with either [ShelbyUSD Tokens](../../apis/faucet/shelbyusd) or [APTOS APT Tokens](../../apis/faucet/aptos)
+
+
+# Getting Started (/sdks/typescript)
+
+# TypeScript SDK
+
+The Shelby Protocol TypeScript SDK provides both Node.js and browser support for interacting
+with the Shelby Protocol. This comprehensive reference covers all available types, functions,
+and classes.
+
+## Installation
+
+<CodeBlockTabs defaultValue="npm">
+  <CodeBlockTabsList>
+    <CodeBlockTabsTrigger value="npm">
+      npm
+    </CodeBlockTabsTrigger>
+
+    <CodeBlockTabsTrigger value="pnpm">
+      pnpm
+    </CodeBlockTabsTrigger>
+
+    <CodeBlockTabsTrigger value="yarn">
+      yarn
+    </CodeBlockTabsTrigger>
+
+    <CodeBlockTabsTrigger value="bun">
+      bun
+    </CodeBlockTabsTrigger>
+  </CodeBlockTabsList>
+
+  <CodeBlockTab value="npm">
+    ```bash
+    npm install @shelby-protocol/sdk @aptos-labs/ts-sdk
+    ```
+  </CodeBlockTab>
+
+  <CodeBlockTab value="pnpm">
+    ```bash
+    pnpm add @shelby-protocol/sdk @aptos-labs/ts-sdk
+    ```
+  </CodeBlockTab>
+
+  <CodeBlockTab value="yarn">
+    ```bash
+    yarn add @shelby-protocol/sdk @aptos-labs/ts-sdk
+    ```
+  </CodeBlockTab>
+
+  <CodeBlockTab value="bun">
+    ```bash
+    bun add @shelby-protocol/sdk @aptos-labs/ts-sdk
+    ```
+  </CodeBlockTab>
+</CodeBlockTabs>
+
+## Quick Start
+
+### Node.js Environment
+
+```typescript
+import { ShelbyNodeClient } from "@shelby-protocol/sdk/node";
+import { Network } from "@aptos-labs/ts-sdk";
+
+// Create client configuration
+const config = {
+  network: Network.SHELBYNET,
+  apiKey: "aptoslabs_***",
+};
+
+// Initialize the Shelby client
+const shelbyClient = new ShelbyNodeClient(config);
+```
+
+Explore the complete [Node.js client](/sdks/typescript/node) usage
+
+### Browser Environment
+
+```typescript
+import { ShelbyClient } from '@shelby-protocol/sdk/browser'
+import { Network } from '@aptos-labs/ts-sdk'
+
+// Create client configuration
+const config = {
+  network: Network.SHELBYNET
+  apiKey: "aptoslabs_***",
+}
+
+// Initialize the Shelby client
+const shelbyClient = new ShelbyClient(config)
+```
+
+Explore the complete [Browser client](/sdks/typescript/browser) usage
+
+## Examples
+
+Explore all of the Shelby examples provided in the examples repo, which demonstrate how to build on Shelby
+
+* [Shelby Examples](https://github.com/shelby/examples/tree/main/apps)
+
+## API Reference
+
+Explore the complete TypeScript API documentation:
+
+* [Core Types & Functions](/sdks/typescript/core) - Shared functionality for both environments
+
+
+# Getting Started (/tools/cli)
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
+import ShelbyUSDFaucet from '@/components/faucet/ShelbyUSDFaucet';
+import AptosFaucet from '@/components/faucet/AptosFaucet';
+
+The Shelby CLI offers an intuitive way to interact with Shelby.
+It lets you upload blobs to and download blobs from Shelby,
+and also manage multiple accounts or networks (called contexts).
+
+## Installation
+
+<Callout type="info">
+  **Prerequisites:** This guide assumes you have [`Node.js`](https://nodejs.org/)
+  and [`npm`](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) installed.
+  If you don't have them installed, please install them before proceeding.
+</Callout>
+
+<Steps>
+  <Step>
+    Install the Shelby CLI
+
+    <CodeBlockTabs defaultValue="npm">
+      <CodeBlockTabsList>
+        <CodeBlockTabsTrigger value="npm">
+          npm
+        </CodeBlockTabsTrigger>
+
+        <CodeBlockTabsTrigger value="pnpm">
+          pnpm
+        </CodeBlockTabsTrigger>
+
+        <CodeBlockTabsTrigger value="yarn">
+          yarn
+        </CodeBlockTabsTrigger>
+
+        <CodeBlockTabsTrigger value="bun">
+          bun
+        </CodeBlockTabsTrigger>
+      </CodeBlockTabsList>
+
+      <CodeBlockTab value="npm">
+        ```bash
+        npm i -g @shelby-protocol/cli
+        ```
+      </CodeBlockTab>
+
+      <CodeBlockTab value="pnpm">
+        ```bash
+        pnpm add -g @shelby-protocol/cli
+        ```
+      </CodeBlockTab>
+
+      <CodeBlockTab value="yarn">
+        ```bash
+        yarn global add @shelby-protocol/cli
+        ```
+      </CodeBlockTab>
+
+      <CodeBlockTab value="bun">
+        ```bash
+        bun add --global @shelby-protocol/cli
+        ```
+      </CodeBlockTab>
+    </CodeBlockTabs>
+  </Step>
+</Steps>
+
+## Quick Start
+
+<Steps>
+  <Step>
+    ### Initialize Shelby
+
+    Start off by initializing the CLI with the `shelby init` command.
+    This will create a shelby cli configuration file at `~/.shelby/config.yaml`.
+
+    ```bash
+    shelby init
+    ```
+
+    **Note**: The CLI will ask you to provide an API key. While optional, this step is highly
+    recommended to avoid ratelimits. Learn more about getting an API key [here](/sdks/typescript/acquire-api-keys).
+
+    If you accept the defaults, your config file (`~/.shelby/config.yaml`)
+    will contain the following:
+
+    ```bash
+    cat ~/.shelby/config.yaml
+    ```
+
+    ```yaml title="~/.shelby/config.yaml"
+    contexts:
+      local:
+        aptos_network:
+          name: local
+          fullnode: http://127.0.0.1:8080/v1
+          faucet: http://127.0.0.1:8081
+          indexer: http://127.0.0.1:8090/v1/graphql
+          pepper: https://api.devnet.aptoslabs.com/keyless/pepper/v0
+          prover: https://api.devnet.aptoslabs.com/keyless/prover/v0
+        shelby_network:
+          rpc_endpoint: http://localhost:9090/
+      shelbynet:
+        aptos_network:
+          name: shelbynet
+          fullnode: https://api.shelbynet.shelby.xyz/v1
+          faucet: https://faucet.shelbynet.shelby.xyz
+          indexer: https://api.shelbynet.shelby.xyz/v1/graphql
+          pepper: https://api.devnet.aptoslabs.com/keyless/pepper/v0
+          prover: https://api.devnet.aptoslabs.com/keyless/prover/v0
+        shelby_network:
+          rpc_endpoint: https://api.shelbynet.shelby.xyz/shelby
+    accounts:
+      alice:
+        private_key: ed25519-priv-0x8...
+        address: "0xfcba...a51c"
+    default_context: shelbynet
+    default_account: alice
+    ```
+  </Step>
+
+  <Step>
+    ### List Contexts (Optional)
+
+    Ensure that the context was created successfully by listing the available contexts (list of networks).
+    The `(default)` network is the one that is currently selected.
+
+    ```bash
+    shelby context list
+    ```
+
+    ```bash title="Output"
+    Aptos Configurations:
+    ┌─────────┬─────────┬───────────────────────┬──────────────────────┬──────────────────────┬────────┐
+    │ Name    │ Network │ Fullnode              │ Indexer              │ Faucet               │ API    │
+    │         │         │                       │                      │                      │ Key    │
+    ├─────────┼─────────┼───────────────────────┼──────────────────────┼──────────────────────┼────────┤
+    │ local   │ local   │ http://127.0.0.1:8080 │ http://127.0.0.1:809 │ http://127.0.0.1:808 │        │
+    │         │         │ /v1                   │ 0/v1/graphql         │ 1                    │        │
+    ├─────────┼─────────┼───────────────────────┼──────────────────────┼──────────────────────┼────────┤
+    │ shelbyn │ shelbyn │ https://api.shelbynet │ https://api.shelbyne │ https://faucet.shelb │        │
+    │ et (def │ et      │ .shelby.xyz/v1        │ t.shelby.xyz/v1/grap │ ynet.shelby.xyz      │        │
+    │ ault)   │         │                       │ hql                  │                      │        │
+    └─────────┴─────────┴───────────────────────┴──────────────────────┴──────────────────────┴────────┘
+
+    Shelby Configurations:
+    ┌───────────┬───────────────────────────────┬──────────────────────────────┬───────────┬───────────┐
+    │ Name      │ RPC                           │ Indexer                      │ RPC API   │ Indexer   │
+    │           │                               │                              │ Key       │ API Key   │
+    ├───────────┼───────────────────────────────┼──────────────────────────────┼───────────┼───────────┤
+    │ local     │ http://localhost:9090/        │                              │           │           │
+    ├───────────┼───────────────────────────────┼──────────────────────────────┼───────────┼───────────┤
+    │ shelbynet │ https://api.shelbynet.shelby. │                              │           │           │
+    │ (default) │ xyz/shelby                    │                              │           │           │
+    └───────────┴───────────────────────────────┴──────────────────────────────┴───────────┴───────────┘
+    ```
+  </Step>
+
+  <Step>
+    ### List Accounts (optional)
+
+    To retrieve the list of accounts, you can use the `shelby account list` command.
+    The `(default)` account is the one that is currently selected.
+
+    ```bash
+    shelby account list
+    ```
+
+    ```bash title="Output"
+    ┌──────────────┬────────────────────────────────────────────────┬──────────────────┐
+    │ Name         │ Address                                        │ Private Key      │
+    ├──────────────┼────────────────────────────────────────────────┼──────────────────┤
+    │ alice        │ 0xfcb......................................0fb │ ed25519-priv-0x8 │
+    │ (default)    │ c276e3e598938e00a51c                           │ adf5...          │
+    └──────────────┴────────────────────────────────────────────────┴──────────────────┘
+    ```
+
+    You will use the value in the `Address` column as the recipient address for funding.
+  </Step>
+
+  <Step>
+    ### Fund Account
+
+    To upload and download files to Shelby, you'll need both
+
+    1. **Aptos tokens** (for gas fees) and
+    2. **ShelbyUSD tokens** (for Shelby operations like upload)
+
+    #### Aptos Tokens
+
+    <Tabs items={['Faucet', 'Shelby CLI']}>
+      <Tab value="Faucet">
+        <AptosFaucet />
+      </Tab>
+
+      <Tab value="Shelby CLI">
+        The command below will output the faucet page URL with your active account pre-populated
+
+        ```bash
+        shelby faucet --no-open # remove the --no-open flag to automatically open in browser
+        ```
+      </Tab>
+
+      <Tab value="Aptos CLI">
+        Make sure the aptos cli is aware of your account and configured.
+        The init command will also print out a command you can run to configure the profile, something like:
+
+        ```bash
+        aptos init --profile shelby-alice --assume-yes --private-key ed25519-priv-0xa... --network custom --rest-url https://api.shelbynet.aptoslabs.com --faucet-url https://faucet.shelbynet.shelby.xyz/
+        ```
+
+        Aptos tokens are used to pay for gas fees.
+        To fund your account with Aptos tokens, you can use `aptos` CLI.
+
+        ```bash
+        aptos account fund-with-faucet --profile shelby-alice --amount 1000000000000000000
+        ```
+      </Tab>
+    </Tabs>
+
+    #### ShelbyUSD Tokens
+
+    <Tabs items={['Faucet', 'Shelby CLI']}>
+      <Tab value="Faucet">
+        <ShelbyUSDFaucet />
+      </Tab>
+
+      <Tab value="Shelby CLI">
+        The command below will output the faucet page URL with your active account pre-populated
+
+        ```bash
+        shelby faucet --no-open # remove the --no-open flag to automatically open in browser
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+
+  <Step>
+    ### Verify Account Balance
+
+    ```bash
+    shelby account balance
+    ```
+
+    ```bash title="Output"
+
+    👤  Account Information
+    ────────────────────────────────────────────
+    🏷️  Alias:        alice
+    🌐  Context:      shelbynet
+
+    🔑  Address:      <ADDRESS>
+    🔗  Aptos Explorer:  https://explorer.aptoslabs.com/account/<ADDRESS>?network=shelbynet
+    🗂️  Shelby Explorer: https://explorer.shelby.xyz/shelbynet/account/<ADDRESS>
+    ────────────────────────────────────────────
+
+    💰  Balance:
+
+    ┌─────────┬───────────────────────────────────┬─────────────────────┬───────────────────┐
+    │ Token   │ Asset                             │ Balance             │ Raw Units         │
+    ├─────────┼───────────────────────────────────┼─────────────────────┼───────────────────┤
+    │ APT     │ 0x1::aptos_coin::AptosCoin        │ 9.998885 APT        │ 999,888,500       │
+    ├─────────┼───────────────────────────────────┼─────────────────────┼───────────────────┤
+    │ ShelbyU │ 0x1b18363a9f1fe5e6ebf247daba5cc1c │ 9.99993056          │ 999,993,056       │
+    │ SD      │ 18052bb232efdc4c50f556053922d98e1 │ ShelbyUSD           │                   │
+    └─────────┴───────────────────────────────────┴─────────────────────┴───────────────────┘
+    ```
+  </Step>
+
+  <Step>
+    ### Upload a file
+
+    ```bash
+    # Uploads "filename.txt" to Shelby under a custom path or name (files/filename.txt), expiring tomorrow (auto-confirms payment)
+    # Expiration date/time (required). Examples: "tomorrow", "in 2 days", "next Friday", "2025-12-31", UNIX timestamp
+    shelby upload /Users/User/.../filename.txt files/filename.txt -e tomorrow --assume-yes
+    ```
+
+    ```bash title="Output"
+    🚀  Upload Summary
+    ────────────────────────────────────────────
+    📦  File:        /Users/User/.../filename.txt
+    📁  Blob Name:   files/filename.txt
+
+    🧮  Filelist created (1 entry)
+    ⏱️  Took: 0.00013s
+    ⚙️  Flag: --assume-yes (auto-confirmed)
+
+    🕒  Expires:  Oct 11, 2025, 4:26:56 PM
+    ✔ Upload complete — took 1.53s
+
+    🌐  Aptos Explorer:
+       https://explorer.aptoslabs.com/txn/<TXN_HASH>?network=shelbynet
+
+    🗂️  Shelby Explorer:
+       https://explorer.shelby.xyz/shelbynet/account/<ACCOUNT_ADDRESS>
+
+    ────────────────────────────────────────────
+    ✨  Done!
+    ```
+  </Step>
+
+  <Step>
+    ### Verify Upload
+
+    You can verify the upload by clicking on the Shelby Explorer link
+    or by running the command below
+
+    ```bash
+    shelby account blobs
+    ```
+
+    ```bash title="Output"
+    🔍  Retrieving blobs for alice
+    👤  Address: <ACCOUNT_ADDRESS>
+    🗂️  Shelby Explorer: https://explorer.shelby.xyz/shelbynet/account/<ACCOUNT_ADDRESS>
+
+    ✅  Retrieved 2 blobs
+    ────────────────────────────────────────────
+    📦  Stored Blobs
+    ┌─────────────────────────────────────────────┬───────────────┬─────────────────────────┐
+    │ Name                                        │ Size          │ Expires                 │
+    ├─────────────────────────────────────────────┼───────────────┼─────────────────────────┤
+    │ <FILE_NAME>                                 │ 494 B         │ Oct 11, 2025, 4:03 PM   │
+    └─────────────────────────────────────────────┴───────────────┴─────────────────────────┘
+    ✨  Done!
+    ```
+  </Step>
+
+  <Step>
+    ### Download the file
+
+    ```bash
+    shelby download files/filename.txt /Users/User/Desktop/filename.txt
+    ```
+  </Step>
+</Steps>
+
+***
+
+## Troubleshooting
+
+### `Insufficient Shelby tokens` Error
+
+**Error:** `Insufficient Shelby tokens. Please fund your account with Shelby tokens to continue.`
+
+**Solution:** This means you need ShelbyUSD tokens (not just Aptos tokens) to perform uploads.
+Visit the [Shelby faucet](/apis/faucet/shelbyusd) and fund your account with ShelbyUSD tokens.
+
+
+# CLI Management (/tools/cli/management)
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+## Check Version
+
+To check which version of the Shelby CLI you have installed:
+
+```bash
+shelby --version
+```
+
+## Find Installation Location
+
+To find where the Shelby CLI is installed:
+
+```bash
+which shelby
+```
+
+## Uninstall
+
+To uninstall the Shelby CLI:
+
+<Steps>
+  <Step>
+    ### Remove Shelby Config
+
+    The shelby config is located at `~/.shelby/config.yaml`.
+  </Step>
+
+  <Step>
+    ### Uninstall Global Package
+
+    ```bash
+    npm uninstall -g @shelby-protocol/cli
+    ```
+  </Step>
+</Steps>
+
+
+# Add Shelby Devnet to Petra (/tools/wallets/petra-setup)
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
+import { NetworkEndpoint } from '@/components/NetworkEndpoint';
+import { Network } from '@aptos-labs/ts-sdk';
+import AptosFaucet from '@/components/faucet/AptosFaucet';
+import ShelbyUSDFaucet from '@/components/faucet/ShelbyUSDFaucet';
+
+This guide will walk you through adding the Shelby Devnet network to your Petra wallet, enabling you to interact with Shelby Devnet directly from your browser.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+* **Petra Wallet** installed in your browser ([Download here](https://petra.app/))
+
+## Adding Shelby Devnet Network
+
+<Steps>
+  <Step>
+    ### Open Petra Wallet Settings
+
+    1. Click on the **Petra wallet extension** in your browser
+    2. Click the **gear icon** (⚙️) in the bottom right to open Settings
+    3. Navigate to the **Network** section
+  </Step>
+
+  <Step>
+    ### Add Custom Network
+
+    1. Click on **Add network**
+    2. You'll see a form to configure the network details
+  </Step>
+
+  <Step>
+    ### Enter Shelby Network Details
+
+    Fill in the form with the following Shelby network configuration:
+
+    | Field            | Value                                                                       |
+    | ---------------- | --------------------------------------------------------------------------- |
+    | **Network Name** | `shelbynet`                                                                 |
+    | **Node URL**     | <code><NetworkEndpoint type="node" network={Network.SHELBYNET} /></code>    |
+    | **Faucet URL**   | <code><NetworkEndpoint type="faucet" network={Network.SHELBYNET} /></code>  |
+    | **Indexer URL**  | <code><NetworkEndpoint type="indexer" network={Network.SHELBYNET} /></code> |
+
+    <Callout type="info">
+      Make sure to enter the URLs exactly as shown, including the `https://` protocol and without trailing slashes.
+    </Callout>
+  </Step>
+
+  <Step>
+    ### Save Network Configuration
+
+    1. Review all the details to ensure they're correct
+    2. Click **Add Network**
+  </Step>
+
+  <Step>
+    ### Switch to Shelby Network
+
+    1. Click the **gear icon** (⚙️) in the bottom right to open Settings
+    2. Navigate to the **Network** section
+    3. Select **shelbynet** from the list of networks
+    4. You should now see your wallet connected to the Shelby network
+
+    <Callout type="success">
+      You're now connected to the Shelby Devnet network! Your account address remains the same across all Aptos networks.
+    </Callout>
+  </Step>
+</Steps>
+
+## Funding Your Account
+
+After adding the Shelby Devnet network, you'll need both **APT** (for gas fees) and **ShelbyUSD** (for storage operations). Enter your wallet address in the faucet to receive testnet tokens.
+
+### APT Faucet
+
+<AptosFaucet />
+
+### ShelbyUSD Faucet
+
+<ShelbyUSDFaucet />
+
+
+# Localhost API (/apis/rpc/localhost)
+
+# Localhost API
+
+This section contains all API endpoints for **Local Development** (`http://localhost:9090`).
+
+Browse the endpoints by category:
+
+* **Sessions** - Manage user sessions and micropayment channels
+* **Storage** - Upload and retrieve video blobs
+* **Multipart Uploads** - Manage multipart upload sessions for large files
+
+
+# Shelbynet API (/apis/rpc/shelbynet)
+
+# Shelbynet API
+
+This section contains all API endpoints for **Shelbynet** (`https://api.shelbynet.shelby.xyz/shelby`).
+
+Browse the endpoints by category:
+
+* **Sessions** - Manage user sessions and micropayment channels
+* **Storage** - Upload and retrieve video blobs
+* **Multipart Uploads** - Manage multipart upload sessions for large files
+
+
+# SimpleShakaPlayer (/sdks/media-player/core/simple-shaka-player)
+
+# Introduction
+
+The core package contains the foundational classes, hooks, and types that power the Shelby Media Player. These include the `SimpleShakaPlayer` class for managing Shaka Player instances, the `usePlayer` hook for accessing player state, and the `PlayerProvider` component for managing player context.
+
+**Importing Core Components**
+
+```typescript
+import { SimpleShakaPlayer, PlayerProvider, usePlayer } from '@shelby-protocol/player'
+```
+
+***
+
+## SimpleShakaPlayer
+
+A class that wraps Shaka Player for adaptive bitrate streaming with HLS/DASH support.
+
+### Methods
+
+#### `load(assetUri, config?)`
+
+Loads an HLS manifest URL or DASH manifest with optional configuration.
+
+| Parameter  | Type                                            | Description                              |
+| ---------- | ----------------------------------------------- | ---------------------------------------- |
+| `assetUri` | `string`                                        | The URI of the HLS/DASH manifest to load |
+| `config`   | `DeepPartial<shaka.extern.PlayerConfiguration>` | Optional Shaka Player configuration      |
+
+**Returns:** `Promise<void>`
+
+**Example:**
+
+```typescript
+import { SimpleShakaPlayer } from '@shelby-protocol/player'
+
+const video = document.querySelector('video')
+const player = new SimpleShakaPlayer(video)
+
+await player.load('https://example.com/video.m3u8', {
+  abr: { enabled: true, defaultBandwidthEstimate: 2000000 }
+})
+```
+
+#### `unload()`
+
+Unloads the current content from the player.
+
+**Returns:** `Promise<void>`
+
+#### `selectTrack(id)`
+
+Selects a specific track by ID. If `null` is provided, the player will use adaptive bitrate streaming.
+
+| Parameter | Type             | Description                                                   |
+| --------- | ---------------- | ------------------------------------------------------------- |
+| `id`      | `number \| null` | The ID of the track to select, or `null` for adaptive bitrate |
+
+**Returns:** `Promise<void>`
+
+#### `destroy()`
+
+Cleans up resources and destroys the player instance. Should be called when the player is no longer needed.
+
+**Returns:** `void`
+
+### Events
+
+The `SimpleShakaPlayer` class extends `EventEmitter` and emits the following events:
+
+<AutoTypeTable path="../../packages/player/src/index.ts" name="SimpleShakaPlayerEvents" />
+
+**Example:**
+
+To listen to events, you can use the `on` method:
+
+```typescript
+player.on('asset-loaded', (event) => {
+  console.log('Previous:', event.previous)
+  console.log('Current:', event.current)
+  console.log('Player:', event.player)
+})
+```
+
+***
+
+## PlayerProvider
+
+A React context provider component that manages player state and provides it to child components via the `usePlayer` hook.
+
+<AutoTypeTable path="../../packages/player/src/index.ts" name="PlayerProviderProps" />
+
+***
+
+## usePlayer
+
+A React hook that provides access to player state and controls.
+
+The hook returns an object with player state and control functions. See the example below for usage.
+
+**Example:**
+
+```tsx
+import { usePlayer } from '@shelby-protocol/player'
+
+function CustomControls() {
+  const { isPlaying, togglePlay, currentTime, duration } = usePlayer()
+
+  return (
+    <div>
+      <button onClick={togglePlay}>
+        {isPlaying ? 'Pause' : 'Play'}
+      </button>
+      <span>{currentTime} / {duration}</span>
+    </div>
+  )
+}
+```
+
+### Return Value
+
+<AutoTypeTable
+  path="../../packages/player/src/index.ts"
+  name="usePlayerReturn"
+  type={`
+import { SimpleShakaPlayer } from '../../classes/shaka/SimpleShakaPlayer';
+import type { RefObject } from 'react';
+import type shaka from 'shaka-player';
+
+export type usePlayerReturn = {
+autoplay: boolean;
+playerRef: RefObject<SimpleShakaPlayer | null>;
+videoRef: RefObject<HTMLVideoElement | null>;
+containerRef: RefObject<HTMLDivElement | null>;
+poster?: string;
+title?: string;
+hasStarted: boolean;
+isPlaying: boolean;
+togglePlay: () => void;
+showControls: boolean;
+setShowControls: (show: boolean) => void;
+volume: number;
+setVolume: (volume: number) => void;
+isMuted: boolean;
+currentTime: number;
+duration: number;
+setCurrentTime: (time: number) => void;
+setDuration: (duration: number) => void;
+isFullscreen: boolean;
+isPip: boolean;
+setIsPip: (isPip: boolean) => void;
+isAdPlaying: boolean;
+isAdSkippable: boolean;
+isAdJumpable: boolean;
+tracks: shaka.extern.Track[];
+selectedTrack: number | null;
+selectTrack: (id: number | null) => void;
+playbackSpeed: number;
+isPlayerLoaded: boolean;
+isPlayerInitialized: boolean;
+};
+`}
+/>
+
+***
+
+## ShakaPlayerConfig
+
+Configuration type for Shaka Player. This is a `DeepPartial<shaka.extern.PlayerConfiguration>` type, allowing you to override any Shaka Player configuration options.
+
+For detailed information about Shaka Player configuration options, see the [Shaka Player Configuration Tutorial](https://shaka-player-demo.appspot.com/docs/api/tutorial-config.html).
+
+**Example:**
+
+```typescript
+const config: ShakaPlayerConfig = {
+  abr: {
+    enabled: true,
+    defaultBandwidthEstimate: 2000000,
+  },
+  streaming: {
+    bufferingGoal: 30,
+  },
+};
+```
+
+
+# SimpleShakaVideoPlayer (/sdks/media-player/core/simple-shaka-video-player)
+
+# SimpleShakaVideoPlayer
+
+The main player component that combines `PlayerProvider` and `PlayerContainer`. This is the recommended entry point for most use cases.
+
+## Props
+
+Extends both `PlayerProviderProps` and `PlayerContainerProps`. See [SimpleShakaPlayer](/sdks/media-player/core/simple-shaka-player) for `PlayerProviderProps` details.
+
+<AutoTypeTable path="../../packages/player/src/index.ts" name="SimpleShakaVideoPlayerProps" />
+
+All props from `PlayerProviderProps` are also supported, including:
+
+* `src` - Video source URL
+* `poster` - Poster image URL
+* `title` - Video title
+* `config` - Shaka Player configuration
+* `autoplay` - Autoplay setting
+* Event callbacks (`onPlay`, `onPause`, etc.)
+
+## Showcase
+
+### Basic Usage
+
+```tsx
+import { SimpleShakaVideoPlayer, VideoOutlet, Poster, DefaultLayout } from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <DefaultLayout />
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+### With Event Handlers
+
+```tsx
+import { SimpleShakaVideoPlayer, VideoOutlet, Poster, DefaultLayout } from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+      onPlay={() => console.log("Playback started")}
+      onPause={() => console.log("Playback paused")}
+      onTimeUpdate={(time) => console.log("Current time:", time)}
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <DefaultLayout />
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+### With Custom Configuration
+
+```tsx
+import { SimpleShakaVideoPlayer, VideoOutlet, Poster, DefaultLayout } from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+      config={{
+        abr: {
+          enabled: true,
+          defaultBandwidthEstimate: 2000000,
+        },
+        streaming: {
+          bufferingGoal: 30,
+        },
+      }}
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <DefaultLayout />
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+### With Autoplay
+
+```tsx
+import { SimpleShakaVideoPlayer, VideoOutlet, Poster, DefaultLayout } from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+      autoplay
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <DefaultLayout />
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+<Callout type="warning">
+  Note: Autoplay may be blocked by browser policies. The player will automatically mute when autoplay is enabled to comply with browser autoplay policies.
+</Callout>
+
+
+# Basic Usage (/sdks/media-player/guides/basic-usage)
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+# Overview
+
+In this guide, we will walk you through the process of setting up a basic video player using the Shelby Media Player.
+
+<Callout type="info">
+  This guide assumes you have a React application set up with TailwindCSS 4 configured.
+</Callout>
+
+## Getting Started
+
+<Steps>
+  <Step>
+    ### Installation
+
+    To get started, you will need to install the Shelby Media Player package and its peer dependencies.
+
+    <CodeBlockTabs defaultValue="npm">
+      <CodeBlockTabsList>
+        <CodeBlockTabsTrigger value="npm">
+          npm
+        </CodeBlockTabsTrigger>
+
+        <CodeBlockTabsTrigger value="pnpm">
+          pnpm
+        </CodeBlockTabsTrigger>
+
+        <CodeBlockTabsTrigger value="yarn">
+          yarn
+        </CodeBlockTabsTrigger>
+
+        <CodeBlockTabsTrigger value="bun">
+          bun
+        </CodeBlockTabsTrigger>
+      </CodeBlockTabsList>
+
+      <CodeBlockTab value="npm">
+        ```bash
+        npm install @shelby-protocol/player react react-dom tailwindcss
+        ```
+      </CodeBlockTab>
+
+      <CodeBlockTab value="pnpm">
+        ```bash
+        pnpm add @shelby-protocol/player react react-dom tailwindcss
+        ```
+      </CodeBlockTab>
+
+      <CodeBlockTab value="yarn">
+        ```bash
+        yarn add @shelby-protocol/player react react-dom tailwindcss
+        ```
+      </CodeBlockTab>
+
+      <CodeBlockTab value="bun">
+        ```bash
+        bun add @shelby-protocol/player react react-dom tailwindcss
+        ```
+      </CodeBlockTab>
+    </CodeBlockTabs>
+  </Step>
+
+  <Step>
+    ### Setting up TailwindCSS
+
+    The Shelby Media Player requires TailwindCSS 4 for styling. Add the following to your `globals.css` file:
+
+    ```css
+    @source "../node_modules/@shelby-protocol/player";
+    ```
+
+    Alternatively, you can import the CSS file directly:
+
+    ```css
+    @import "@shelby-protocol/player/styles/shadcn.css";
+    ```
+  </Step>
+
+  <Step>
+    ### Basic Player Setup
+
+    Now you can create a basic video player. Import the necessary components and set up your player:
+
+    ```tsx title="VideoPlayer.tsx"
+    import {
+      SimpleShakaVideoPlayer,
+      VideoOutlet,
+      Poster,
+      DefaultLayout,
+    } from "@shelby-protocol/player";
+
+    export function VideoPlayer() {
+      return (
+        <SimpleShakaVideoPlayer
+          src="https://example.com/video.m3u8"
+          poster="https://example.com/poster.jpg"
+          title="My Video"
+        >
+          <VideoOutlet>
+            <Poster />
+          </VideoOutlet>
+          <DefaultLayout />
+        </SimpleShakaVideoPlayer>
+      );
+    }
+    ```
+  </Step>
+
+  <Step>
+    ### Adding Event Handlers
+
+    You can add event handlers to respond to player events:
+
+    ```tsx title="VideoPlayer.tsx"
+    import {
+      SimpleShakaVideoPlayer,
+      VideoOutlet,
+      Poster,
+      DefaultLayout,
+    } from "@shelby-protocol/player";
+
+    export function VideoPlayer() {
+      return (
+        <SimpleShakaVideoPlayer
+          src="https://example.com/video.m3u8"
+          poster="https://example.com/poster.jpg"
+          title="My Video"
+          onPlay={() => console.log("Playback started")}
+          onPause={() => console.log("Playback paused")}
+          onTimeUpdate={(time) => console.log("Current time:", time)}
+          onDurationChange={(duration) => console.log("Duration:", duration)}
+        >
+          <VideoOutlet>
+            <Poster />
+          </VideoOutlet>
+          <DefaultLayout />
+        </SimpleShakaVideoPlayer>
+      );
+    }
+    ```
+  </Step>
+
+  <Step>
+    ### Configuring Shaka Player
+
+    You can customize Shaka Player behavior by passing a configuration object:
+
+    ```tsx title="VideoPlayer.tsx"
+    import {
+      SimpleShakaVideoPlayer,
+      VideoOutlet,
+      Poster,
+      DefaultLayout,
+    } from "@shelby-protocol/player";
+
+    export function VideoPlayer() {
+      return (
+        <SimpleShakaVideoPlayer
+          src="https://example.com/video.m3u8"
+          poster="https://example.com/poster.jpg"
+          title="My Video"
+          config={{
+            abr: {
+              enabled: true,
+              defaultBandwidthEstimate: 2000000,
+            },
+            streaming: {
+              bufferingGoal: 30,
+            },
+          }}
+        >
+          <VideoOutlet>
+            <Poster />
+          </VideoOutlet>
+          <DefaultLayout />
+        </SimpleShakaVideoPlayer>
+      );
+    }
+    ```
+  </Step>
+
+  <Step>
+    ### Adding Autoplay
+
+    You can enable autoplay by setting the `autoplay` prop:
+
+    ```tsx title="VideoPlayer.tsx"
+    import {
+      SimpleShakaVideoPlayer,
+      VideoOutlet,
+      Poster,
+      DefaultLayout,
+    } from "@shelby-protocol/player";
+
+    export function VideoPlayer() {
+      return (
+        <SimpleShakaVideoPlayer
+          src="https://example.com/video.m3u8"
+          poster="https://example.com/poster.jpg"
+          title="My Video"
+          autoplay
+        >
+          <VideoOutlet>
+            <Poster />
+          </VideoOutlet>
+          <DefaultLayout />
+        </SimpleShakaVideoPlayer>
+      );
+    }
+    ```
+
+    <Callout type="warning">
+      Note: Autoplay may be blocked by browser policies. The player will automatically mute when autoplay is enabled to comply with browser autoplay policies.
+    </Callout>
+  </Step>
+</Steps>
+
+## Conclusion
+
+You now have a fully functional video player! The `DefaultLayout` provides all standard controls including play/pause, volume, fullscreen, picture-in-picture, time scrubbing, and quality/speed settings.
+
+For more advanced usage, check out the [Custom Layout Guide](/sdks/media-player/guides/custom-layout) to learn how to build your own custom player interface.
+
+<Cards>
+  <Card title="Specifications" href="/sdks/media-player/components/specifications">
+    Reference documentation for all components
+  </Card>
+
+  <Card title="Custom Layout Guide" href="/sdks/media-player/guides/custom-layout">
+    Learn how to build custom player layouts
+  </Card>
+</Cards>
+
+<br />
+
+
+# Custom Layout (/sdks/media-player/guides/custom-layout)
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+# Overview
+
+In this guide, we will walk you through building a custom player layout using the primitive components provided by the Shelby Media Player.
+
+<Callout type="info">
+  This guide assumes you have completed the [Basic Usage Guide](/sdks/media-player/guides/basic-usage) and understand the fundamentals of the player.
+</Callout>
+
+## Getting Started
+
+<Steps>
+  <Step>
+    ### Understanding the Component Structure
+
+    The Shelby Media Player uses a composition-based architecture. The main components are:
+
+    * **`SimpleShakaVideoPlayer`** - Wraps everything and provides context
+    * **`VideoOutlet`** - Contains the video element
+    * **`Controls`** - Root container for all controls
+    * **`ControlsGroup`** - Groups related controls
+    * **`usePlayer`** - Hook to access player state and controls
+  </Step>
+
+  <Step>
+    ### Basic Custom Layout
+
+    Let's start with a simple custom layout that includes only play/pause and time display:
+
+    ```tsx title="SimpleCustomLayout.tsx"
+    import {
+      SimpleShakaVideoPlayer,
+      VideoOutlet,
+      Poster,
+      Controls,
+      ControlsGroup,
+      PlayButton,
+      MediaTime,
+      usePlayer,
+    } from "@shelby-protocol/player";
+
+    function SimpleCustomLayout() {
+      return (
+        <Controls>
+          <ControlsGroup className="p-4">
+            <PlayButton />
+            <MediaTime />
+          </ControlsGroup>
+        </Controls>
+      );
+    }
+
+    export function SimpleVideoPlayer() {
+      return (
+        <SimpleShakaVideoPlayer
+          src="https://example.com/video.m3u8"
+          poster="https://example.com/poster.jpg"
+          title="My Video"
+        >
+          <VideoOutlet>
+            <Poster />
+          </VideoOutlet>
+          <SimpleCustomLayout />
+        </SimpleShakaVideoPlayer>
+      );
+    }
+    ```
+  </Step>
+
+  <Step>
+    ### Adding More Controls
+
+    Now let's add more controls including volume, time slider, and fullscreen:
+
+    ```tsx title="AdvancedCustomLayout.tsx"
+    import {
+      SimpleShakaVideoPlayer,
+      VideoOutlet,
+      Poster,
+      Controls,
+      ControlsGroup,
+      PlayButton,
+      VolumeButton,
+      FullscreenButton,
+      TimeSlider,
+      MediaTime,
+      MediaTitle,
+    } from "@shelby-protocol/player";
+
+    function AdvancedCustomLayout() {
+      return (
+        <Controls>
+          <div className="flex-1" />
+          <ControlsGroup className="px-4 w-full">
+            <TimeSlider />
+          </ControlsGroup>
+          <ControlsGroup className="p-4">
+            <PlayButton />
+            <VolumeButton />
+            <MediaTime />
+            <MediaTitle />
+            <div className="flex-1" />
+            <FullscreenButton />
+          </ControlsGroup>
+        </Controls>
+      );
+    }
+
+    export function AdvancedVideoPlayer() {
+      return (
+        <SimpleShakaVideoPlayer
+          src="https://example.com/video.m3u8"
+          poster="https://example.com/poster.jpg"
+          title="My Video"
+        >
+          <VideoOutlet>
+            <Poster />
+          </VideoOutlet>
+          <AdvancedCustomLayout />
+        </SimpleShakaVideoPlayer>
+      );
+    }
+    ```
+  </Step>
+
+  <Step>
+    ### Using the usePlayer Hook
+
+    You can access player state and create custom controls using the `usePlayer` hook:
+
+    ```tsx title="CustomControls.tsx"
+    import {
+      Controls,
+      ControlsGroup,
+      usePlayer,
+    } from "@shelby-protocol/player";
+
+    function CustomControls() {
+      const {
+        isPlaying,
+        togglePlay,
+        currentTime,
+        duration,
+        volume,
+        setVolume,
+        isMuted,
+      } = usePlayer();
+
+      const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+      return (
+        <Controls>
+          <ControlsGroup className="p-4">
+            <button onClick={togglePlay}>
+              {isPlaying ? "Pause" : "Play"}
+            </button>
+            <div className="flex-1 mx-4">
+              <div className="w-full bg-gray-300 h-2 rounded">
+                <div
+                  className="bg-blue-500 h-2 rounded"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
+            <span>{Math.floor(currentTime)}s / {Math.floor(duration)}s</span>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={isMuted ? 0 : volume}
+              onChange={(e) => setVolume(parseFloat(e.target.value))}
+            />
+          </ControlsGroup>
+        </Controls>
+      );
+    }
+    ```
+  </Step>
+
+  <Step>
+    ### Adding Custom Styling
+
+    You can customize the appearance of your layout using TailwindCSS classes:
+
+    ```tsx title="StyledCustomLayout.tsx"
+    import {
+      SimpleShakaVideoPlayer,
+      VideoOutlet,
+      Poster,
+      Controls,
+      ControlsGroup,
+      PlayButton,
+      VolumeButton,
+      FullscreenButton,
+      TimeSlider,
+      MediaTime,
+      MediaTitle,
+    } from "@shelby-protocol/player";
+
+    function StyledCustomLayout() {
+      return (
+        <Controls>
+          <div className="flex-1" />
+          <ControlsGroup className="px-6 w-full bg-gradient-to-t from-black/80 to-transparent">
+            <TimeSlider />
+          </ControlsGroup>
+          <ControlsGroup className="p-4 bg-gradient-to-t from-black/80 to-transparent">
+            <PlayButton className="hover:scale-110 transition-transform" />
+            <VolumeButton className="hover:scale-110 transition-transform" />
+            <MediaTime className="text-white font-mono" />
+            <MediaTitle className="text-white font-semibold" />
+            <div className="flex-1" />
+            <FullscreenButton className="hover:scale-110 transition-transform" />
+          </ControlsGroup>
+        </Controls>
+      );
+    }
+
+    export function StyledVideoPlayer() {
+      return (
+        <SimpleShakaVideoPlayer
+          src="https://example.com/video.m3u8"
+          poster="https://example.com/poster.jpg"
+          title="My Video"
+          className="rounded-lg overflow-hidden shadow-2xl"
+        >
+          <VideoOutlet>
+            <Poster />
+          </VideoOutlet>
+          <StyledCustomLayout />
+        </SimpleShakaVideoPlayer>
+      );
+    }
+    ```
+  </Step>
+
+  <Step>
+    ### Conditional Rendering Based on State
+
+    You can conditionally render elements based on player state:
+
+    ```tsx title="ConditionalCustomLayout.tsx"
+    import {
+      SimpleShakaVideoPlayer,
+      VideoOutlet,
+      Poster,
+      Controls,
+      ControlsGroup,
+      PlayButton,
+      MediaTime,
+      usePlayer,
+    } from "@shelby-protocol/player";
+
+    function ConditionalCustomLayout() {
+      const { isPlaying, isAdPlaying, isFullscreen } = usePlayer();
+
+      return (
+        <Controls>
+          <ControlsGroup className="p-4">
+            <PlayButton />
+            <MediaTime />
+            {isAdPlaying && (
+              <span className="text-yellow-400 px-2">Ad Playing</span>
+            )}
+            {isFullscreen && (
+              <span className="text-blue-400 px-2">Fullscreen</span>
+            )}
+          </ControlsGroup>
+          {!isPlaying && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-white text-4xl">Click to Play</div>
+            </div>
+          )}
+        </Controls>
+      );
+    }
+
+    export function ConditionalVideoPlayer() {
+      return (
+        <SimpleShakaVideoPlayer
+          src="https://example.com/video.m3u8"
+          poster="https://example.com/poster.jpg"
+          title="My Video"
+        >
+          <VideoOutlet>
+            <Poster />
+          </VideoOutlet>
+          <ConditionalCustomLayout />
+        </SimpleShakaVideoPlayer>
+      );
+    }
+    ```
+  </Step>
+</Steps>
+
+## Best Practices
+
+1. **Always wrap controls in `Controls`** - This ensures proper positioning and visibility behavior
+2. **Use `ControlsGroup` for related controls** - Groups appear/disappear together
+3. **Access state via `usePlayer`** - Don't try to access player state outside of components that use the hook
+4. **Use the provided components when possible** - They handle edge cases and accessibility
+5. **Test with different video sources** - HLS, DASH, and regular video files may behave differently
+
+## Conclusion
+
+You now know how to build custom player layouts! The composition-based architecture gives you full control over the player interface while maintaining all the functionality of the underlying Shaka Player.
+
+For more information, check out the [Component Specifications](/sdks/media-player/components/specifications) for detailed API documentation.
+
+<Cards>
+  <Card title="Component Specifications" href="/sdks/media-player/components/specifications">
+    Reference documentation for all components
+  </Card>
+
+  <Card title="Core Documentation" href="/sdks/media-player/core/simple-shaka-player">
+    Reference documentation for hooks and classes
+  </Card>
+</Cards>
+
+<br />
+
+
+# Overview (/sdks/typescript/browser)
+
+# Browser API
+
+Client-side functionality optimized for browser environments with Web APIs.
+
+## Browser Implementation
+
+The browser package provides the same core functionality as the Node.js client but optimized for browser environments. It uses the same `ShelbyClient` base class with browser-compatible implementations.
+
+```typescript
+import { ShelbyClient } from "@shelby-protocol/sdk/browser";
+```
+
+## Usage
+
+```typescript
+import { ShelbyClient } from '@shelby-protocol/sdk/browser'
+import { Network } from '@aptos-labs/ts-sdk'
+
+// Create client configuration
+const config = {
+  network: Network.SHELBYNET
+  apiKey: process.env.SHELBY_API_KEY,
+}
+
+// Initialize the Shelby client
+const shelbyClient = new ShelbyClient(config)
+```
+
+
+# Overview (/sdks/typescript/core)
+
+# Introduction
+
+The core package contains environment agnostic types and functions that can be used to interact with the Shelby network. This shared package will typically
+contain the types and functions that are shared between the Node.js and browser environments.
+
+## Installation
+
+<CodeBlockTabs defaultValue="npm">
+  <CodeBlockTabsList>
+    <CodeBlockTabsTrigger value="npm">
+      npm
+    </CodeBlockTabsTrigger>
+
+    <CodeBlockTabsTrigger value="pnpm">
+      pnpm
+    </CodeBlockTabsTrigger>
+
+    <CodeBlockTabsTrigger value="yarn">
+      yarn
+    </CodeBlockTabsTrigger>
+
+    <CodeBlockTabsTrigger value="bun">
+      bun
+    </CodeBlockTabsTrigger>
+  </CodeBlockTabsList>
+
+  <CodeBlockTab value="npm">
+    ```bash
+    npm install @shelby-protocol/sdk @aptos-labs/ts-sdk
+    ```
+  </CodeBlockTab>
+
+  <CodeBlockTab value="pnpm">
+    ```bash
+    pnpm add @shelby-protocol/sdk @aptos-labs/ts-sdk
+    ```
+  </CodeBlockTab>
+
+  <CodeBlockTab value="yarn">
+    ```bash
+    yarn add @shelby-protocol/sdk @aptos-labs/ts-sdk
+    ```
+  </CodeBlockTab>
+
+  <CodeBlockTab value="bun">
+    ```bash
+    bun add @shelby-protocol/sdk @aptos-labs/ts-sdk
+    ```
+  </CodeBlockTab>
+</CodeBlockTabs>
+
+This package comes pre-packaged with the Node.js and browser packages. You can access it by using the `@shelby-protocol/sdk` entry point.
+
+**Node.js Entry Point**
+
+```typescript
+import { ShelbyBlob } from '@shelby-protocol/sdk/node'
+```
+
+**Browser Entry Point**
+
+```typescript
+import { ShelbyBlob } from '@shelby-protocol/sdk/browser'
+```
+
+
+# Specifications (/sdks/typescript/core/specifications)
+
+import { TypeTable } from 'fumadocs-ui/components/type-table'
+
+## ShelbyBlobClient
+
+Blockchain-focused client for managing blob commitments and metadata on-chain.
+
+<AutoTypeTable path="../../packages/sdk/src/core/clients/ShelbyBlobClient.ts" name="ShelbyBlobClient" />
+
+### Methods
+
+#### `registerBlob({account, blobName, blobMerkleRoot, size, expirationMicros, options})`
+
+Registers a blob on the blockchain by writing its commitments.
+
+| Parameter          | Type                          | Description                             |
+| ------------------ | ----------------------------- | --------------------------------------- |
+| `account`          | `Account`                     | The account to register the blob for    |
+| `blobName`         | `BlobName`                    | The name/path of the blob               |
+| `blobMerkleRoot`   | `string`                      | The merkle root of the blob             |
+| `size`             | `number`                      | The size of the blob in bytes           |
+| `expirationMicros` | `number`                      | The expiration time in microseconds     |
+| `options`          | `WriteBlobCommitmentsOptions` | Optional write blob commitments options |
+
+**Returns:** `Promise<{ transaction: PendingTransactionResponse }>`
+
+#### `confirmBlobChunks({signer, account, blobName, signedChunksetChunkCommitments, options})`
+
+Confirms the blob chunks for a given blob.
+
+| Parameter                        | Type                        | Description                                |
+| -------------------------------- | --------------------------- | ------------------------------------------ |
+| `signer`                         | `Account`                   | The account to confirm the blob chunks for |
+| `account`                        | `AccountAddressInput`       | The account address                        |
+| `blobName`                       | `string`                    | The name/path of the blob                  |
+| `signedChunksetChunkCommitments` | `SignedChunkCommitment[][]` | The signed chunk commitments for the blob  |
+| `options`                        | `ConfirmBlobChunksOptions`  | Optional confirm blob chunks options       |
+
+**Returns:** `Promise<{ transaction: PendingTransactionResponse }>`
+
+#### `getBlobMetadata({account, name})`
+
+Retrieves blob metadata from the blockchain.
+
+| Parameter | Type                  | Description               |
+| --------- | --------------------- | ------------------------- |
+| `account` | `AccountAddressInput` | The account address       |
+| `name`    | `string`              | The name/path of the blob |
+
+**Returns:** `Promise<BlobMetadata>`
+
+#### `getAccountBlobs({account})`
+
+Gets all blob metadata for a specific account.
+
+| Parameter | Type                  | Description         |
+| --------- | --------------------- | ------------------- |
+| `account` | `AccountAddressInput` | The account address |
+
+**Returns:** `Promise<BlobMetadata[]>`
+
+***
+
+## ShelbyRPCClient
+
+The client to interact with the Shelby RPC node which is responsible for storing, confirming, and retrieving blobs from the storage layer.
+
+<AutoTypeTable path="../../packages/sdk/src/core/clients/ShelbyRPCClient.ts" name="ShelbyRPCClient" />
+
+### Methods
+
+#### `putBlob({account, blobName, blobData})`
+
+Uploads blob data to Shelby storage using multipart upload for reliability.
+
+| Parameter  | Type                  | Description                                 |
+| ---------- | --------------------- | ------------------------------------------- |
+| `account`  | `AccountAddressInput` | The account address to store the blob under |
+| `blobName` | `string`              | The name/path of the blob                   |
+| `blobData` | `Uint8Array`          | The blob data to upload                     |
+
+#### `getBlob({account, blobName, range?})`
+
+Downloads blob data as a readable stream with optional byte range support.
+
+| Parameter  | Type                              | Description               |
+| ---------- | --------------------------------- | ------------------------- |
+| `account`  | `AccountAddressInput`             | The account address       |
+| `blobName` | `string`                          | The name/path of the blob |
+| `range`    | `{ start: number; end?: number }` | Optional byte range       |
+
+**Returns:** `Promise<ShelbyBlob>`
+
+***
+
+### ShelbyBlob
+
+A blob is a representation of a file (or a part of a file) that is stored on the Shelby network.
+
+<AutoTypeTable path="../../packages/sdk/src/core/blobs.ts" name="ShelbyBlob" />
+
+### BlobMetadata
+
+The metadata of a blob that describes the blob and its properties.
+
+<AutoTypeTable path="../../packages/sdk/src/core/types/blobs.ts" name="BlobMetadata" />
+
+### ClayEncoding
+
+The encoding of a blob that describes the encoding of the blob.
+
+<AutoTypeTable path="../../packages/sdk/src/core/types/blobs.ts" name="ClayEncoding" />
+
+
+# Overview (/sdks/typescript/node)
+
+# Introduction
+
+The Node.js version of the SDK is used to interact with the Shelby network from a Node.js environment. The SDK provides a high level interface for interacting with the different components of the Shelby network: the coordination layer,
+the RPC layer, and the storage layer.
+
+## Installation
+
+<CodeBlockTabs defaultValue="npm">
+  <CodeBlockTabsList>
+    <CodeBlockTabsTrigger value="npm">
+      npm
+    </CodeBlockTabsTrigger>
+
+    <CodeBlockTabsTrigger value="pnpm">
+      pnpm
+    </CodeBlockTabsTrigger>
+
+    <CodeBlockTabsTrigger value="yarn">
+      yarn
+    </CodeBlockTabsTrigger>
+
+    <CodeBlockTabsTrigger value="bun">
+      bun
+    </CodeBlockTabsTrigger>
+  </CodeBlockTabsList>
+
+  <CodeBlockTab value="npm">
+    ```bash
+    npm install @shelby-protocol/sdk @aptos-labs/ts-sdk
+    ```
+  </CodeBlockTab>
+
+  <CodeBlockTab value="pnpm">
+    ```bash
+    pnpm add @shelby-protocol/sdk @aptos-labs/ts-sdk
+    ```
+  </CodeBlockTab>
+
+  <CodeBlockTab value="yarn">
+    ```bash
+    yarn add @shelby-protocol/sdk @aptos-labs/ts-sdk
+    ```
+  </CodeBlockTab>
+
+  <CodeBlockTab value="bun">
+    ```bash
+    bun add @shelby-protocol/sdk @aptos-labs/ts-sdk
+    ```
+  </CodeBlockTab>
+</CodeBlockTabs>
+
+## Usage
+
+<Callout type="info">
+  Make sure you [aquired an API Key](/sdks/typescript/acquire-api-keys)
+</Callout>
+
+Access the Node.js version of the SDK by importing using the `@shelby-protocol/sdk/node`
+entry point.
+
+```typescript
+import { ShelbyNodeClient } from "@shelby-protocol/sdk/node";
+import { Network } from "@aptos-labs/ts-sdk";
+
+// Create client configuration
+const config = {
+  network: Network.SHELBYNET,
+  apiKey: "aptoslabs_***",
+};
+
+// Initialize the Shelby client
+const shelbyClient = new ShelbyNodeClient(config);
+```
+
+## Next Steps
+
+<Cards>
+  <Card title="Specifications" href="/sdks/typescript/node/specifications">
+    Reference documentation for the API and specifications
+  </Card>
+
+  <Card title="Uploading a File" href="/sdks/typescript/node/guides/uploading-file">
+    Learn how to upload a file to the Shelby network
+  </Card>
+</Cards>
+
+<br />
+
+
+# Specifications (/sdks/typescript/node/specifications)
+
+<Callout type="warning">
+  On this page, we use `https://api.shelby.dev` as a placeholder base URL for the Shelby API. In order to obtain the correct base URL, please make a request in our Discord server.
+</Callout>
+
+## ShelbyNodeClient
+
+Node.js-specific implementation that extends the core ShelbyClient with server-side blob operations.
+
+<AutoTypeTable path="../../packages/sdk/src/node/clients/ShelbyNodeClient.ts" name="ShelbyNodeClient" />
+
+The `ShelbyNodeClient` class extends the base `ShelbyClient` and adds Node.js-specific methods for blob operations with multipart upload support and streaming downloads. It combines the functionality of `ShelbyBlobClient` and `ShelbyRPCClient` (both documented in the [core specifications](/sdks/typescript/core/specifications)) to provide a complete Node.js solution.
+
+### Methods
+
+#### `upload({ signer, blobData, blobName, expirationMicros, options })`
+
+Uploads a blob to the Shelby network, handling both blockchain commitments and storage upload.
+
+| Parameter          | Type                          | Description                                     |
+| ------------------ | ----------------------------- | ----------------------------------------------- |
+| `signer`           | `Account`                     | The signer of the transaction                   |
+| `blobData`         | `Buffer`                      | The data to upload                              |
+| `blobName`         | `BlobName`                    | The name of the blob                            |
+| `expirationMicros` | `number`                      | The expiration time of the blob in microseconds |
+| `options`          | `WriteBlobCommitmentsOptions` | The options for the upload                      |
+
+**Returns:** `Promise<{ transaction: CommittedTransactionResponse; blobCommitments: BlobCommitments }>`
+
+#### `download({account, blobName, range?})`
+
+Downloads blob data as a ShelbyBlob with a readable stream.
+
+| Parameter  | Type                              | Description               |
+| ---------- | --------------------------------- | ------------------------- |
+| `account`  | `AccountAddressInput`             | The account address       |
+| `blobName` | `string`                          | The name/path of the blob |
+| `range`    | `{ start: number; end?: number }` | Optional byte range       |
+
+**Returns:** `Promise<ShelbyBlob>`
+
+### Properties
+
+The `ShelbyNodeClient` provides access to the underlying clients:
+
+#### `coordination: ShelbyBlobClient`
+
+The blockchain coordination client for managing blob commitments and metadata. See [ShelbyBlobClient documentation](/sdks/typescript/core/specifications#shelbyblobclient) for details.
+
+#### `rpc: ShelbyRPCClient`
+
+The RPC client for blob storage operations. See [ShelbyRPCClient documentation](/sdks/typescript/core/specifications#shelbyrcpclient) for details.
+
+### Examples
+
+#### Complete Upload and Download Flow
+
+```typescript
+import { ShelbyNodeClient } from '@shelby-protocol/sdk/node'
+import { Account, Network } from '@aptos-labs/ts-sdk'
+
+// Create node client
+const client = new ShelbyNodeClient({
+  network: Network.SHELBYNET
+})
+
+// Create or get account
+const account = Account.generate()
+
+// Prepare blob data
+const blobData = Buffer.from('Hello, Shelby!')
+const blobName = 'greeting.txt'
+const expirationMicros = Date.now() * 1000 + 3600_000_000 // 1 hour from now
+
+// Upload blob (commits to blockchain and uploads to storage)
+const { transaction, blobCommitments } = await client.upload({
+  signer: account,
+  blobData,
+  blobName,
+  expirationMicros,
+})
+
+console.log('Upload completed:', transaction.hash)
+
+// Download blob
+const blob = await client.download({
+  account: account.accountAddress,
+  blobName,
+})
+
+console.log('Downloaded blob:', blob.name, blob.contentLength, 'bytes')
+```
+
+
+# Account Management (/tools/cli/commands/account-management)
+
+As part of the upload process, the CLI requires that you have a funded account in order to pay for upload and gas fees. The CLI provides a number of commands to help you manage the signer
+account that is used in the CLI.
+
+## `shelby account`
+
+To create a new account, you can use the `shelby account create` command.
+
+**Interactive Mode**
+
+```bash
+shelby account create 
+```
+
+**Non-interactive Mode**
+
+```bash
+shelby account create --name <ACCOUNT_NAME> --scheme <ACCOUNT_SCHEME> --private-key <PRIVATE_KEY> --address <ACCOUNT_ADDRESS>
+```
+
+### Options
+
+| Flag                          | Description                                                                        |
+| ----------------------------- | ---------------------------------------------------------------------------------- |
+| `--name <account-name>`       | The label to store the credentials under.                                          |
+| `--scheme <signature-scheme>` | Signature scheme for the private key. The CLI currently supports `ed25519`.        |
+| `--private-key <key>`         | Raw private key (`ed25519-priv-0x…` format). Required in non-interactive mode.     |
+| `--address <aptos-address>`   | Optional Aptos account address (`0x…`). Useful if you generated the key elsewhere. |
+
+<Callout type="info">
+  All four flags must be provided to skip the interactive wizard. Omitting any flag drops you into the TUI and the CLI will generate a fresh account for you.
+</Callout>
+
+## `shelby account list`
+
+To list all accounts, you can use the `shelby account list` command.
+
+```bash
+shelby account list
+```
+
+```bash title="Example Output"
+┌─────────────┬─────────────────────────────────────────────┬────────────────┐
+│ Name        │ Address                                     │ Private Key    │
+├─────────────┼─────────────────────────────────────────────┼────────────────┤
+│ alice       │ 0xf4b6c29e32ab75d7088886ef5aa2cfebbe4303ba8 │ ed25519-priv-0 │
+│ (default)   │ 3f3033f76e4e009e0e87fba                     │ x1ed77...      │
+├─────────────┼─────────────────────────────────────────────┼────────────────┤
+│ bob         │ 0x03206522072ab6bca0d44ea0867d9a3eadb59eb4e │ ed25519-priv-0 │
+│             │ 359d9b55f3dc037463caf8c                     │ x18449...      │
+└─────────────┴─────────────────────────────────────────────┴────────────────┘
+```
+
+## `shelby account use`
+
+You can choose an account to use by default by using the `shelby account use` command. This account will automatically be used
+when running any command that requires an account.
+
+```bash
+shelby account use <ACCOUNT_NAME>
+```
+
+```bash title="Example Output"
+✅ Now using account 'alice'
+```
+
+## `shelby account delete`
+
+Delete an account from the configuration file.
+
+```bash
+shelby account delete <ACCOUNT_NAME>
+```
+
+```bash title="Example Output"
+✅ Account 'alice' deleted successfully
+```
+
+## `shelby account blobs`
+
+List all blobs associated with an account.
+
+```bash
+shelby account blobs
+```
+
+```bash title="Example Output"
+🔍  Retrieving blobs for alice
+👤  Address: 0x0694a79e492d268acf0c6c0b01f42654ac050071a343ebc4226cb6717d63e4ea
+🗂️  Shelby Explorer: https://explorer.shelby.xyz/shelbynet/account/0x0694a79e492d268acf0c6c0b01f42654ac050071a343ebc4226cb6717d63e4ea
+
+✅  Retrieved 2 blobs
+────────────────────────────────────────────
+📦  Stored Blobs
+┌─────────────────────────────────────────────┬───────────────┬─────────────────────────┐
+│ Name                                        │ Size          │ Expires                 │
+├─────────────────────────────────────────────┼───────────────┼─────────────────────────┤
+│ .gitignore-v1                               │ 494 B         │ Oct 11, 2025, 4:03 PM   │
+├─────────────────────────────────────────────┼───────────────┼─────────────────────────┤
+│ .gitignore-v2                               │ 494 B         │ Oct 11, 2025, 4:03 PM   │
+└─────────────────────────────────────────────┴───────────────┴─────────────────────────┘
+✨  Done!
+```
+
+<Callout type="info">
+  `shelby account blobs` requires your active context to include a Shelby indexer endpoint. Configure one with `shelby context create`/`update` before relying on this command.
+</Callout>
+
+### Options
+
+| Flag                   | Description                                                   |
+| ---------------------- | ------------------------------------------------------------- |
+| `-a, --account <name>` | Optional override for the account whose blobs will be listed. |
+
+## `shelby account balance`
+
+Display the Aptos (APT) and ShelbyUSD balances for the active account (or a supplied address).
+
+```bash
+shelby account balance
+```
+
+```bash title="Example Output"
+👤  Account Information
+────────────────────────────────────────────
+🏷️  Alias:        alice
+🌐  Context:      shelbynet
+
+🔑  Address:      0x0694a79e492d268acf0c6c0b01f42654ac050071a343ebc4226cb6717d63e4ea
+🔗  Aptos Explorer:  https://explorer.aptoslabs.com/account/0x0694a79e492d268acf0c6c0b01f42654ac050071a343ebc4226cb6717d63e4ea?network=shelbynet
+🗂️  Shelby Explorer: https://explorer.shelby.xyz/shelbynet/account/0x0694a79e492d268acf0c6c0b01f42654ac050071a343ebc4226cb6717d63e4ea
+────────────────────────────────────────────
+
+💰  Balance:
+
+┌─────────┬───────────────────────────────────┬─────────────────────┬───────────────────┐
+│ Token   │ Asset                             │ Balance             │ Raw Units         │
+├─────────┼───────────────────────────────────┼─────────────────────┼───────────────────┤
+│ APT     │ 0x1::aptos_coin::AptosCoin        │ 9.998262 APT        │ 999,826,200       │
+├─────────┼───────────────────────────────────┼─────────────────────┼───────────────────┤
+│ ShelbyU │ 0x1b18363a9f1fe5e6ebf247daba5cc1c │ 9.99986112          │ 999,986,112       │
+│ SD      │ 18052bb232efdc4c50f556053922d98e1 │ ShelbyUSD           │                   │
+└─────────┴───────────────────────────────────┴─────────────────────┴───────────────────┘
+```
+
+### Options
+
+| Flag                   | Description                                                  |
+| ---------------------- | ------------------------------------------------------------ |
+| `-a, --account <name>` | Query a configured account by name instead of the default.   |
+| `-c, --context <name>` | Use balances from a different context/environment.           |
+| `--address <hex>`      | Provide a raw Aptos address to query (skips account lookup). |
+
+
+# Commitment (/tools/cli/commands/commitment)
+
+## `shelby commitment`
+
+Generate blob and chunkset commitments for a local file without uploading. Useful for debugging, introspection, or pre-computing metadata.
+The command runs entirely offline but requires the CLI to have access to the Clay erasure-code WASM artifacts (the published package includes them by default).
+
+Note that the commitments can also be saved to local files during upload with the `--output-commitments` option.
+
+```bash
+shelby commitment [options]
+```
+
+### Options
+
+None
+
+#### Example
+
+```
+shelby commitment README.md out.json
+
+```
+
+Output:
+
+```
+$ jq . out.json  | head
+{
+  "schema_version": "1.3",
+  "raw_data_size": 1775,
+  "blob_merkle_root": "0xecc399a8cb4a198b29f4b9c3fb3b2d0636a53be3298cd8a5c598153c48a90f07",
+  "chunkset_commitments": [
+    {
+      "chunkset_root": "0x4cc2bb1793de54665388b00c31580d3fa2df1e121a6b8d8d67ea9be2b911638c",
+      "chunk_commitments": [
+        "0x01cf2463b8f772d77e93876e9f4ec99d13a3b513b2d073d60f198575ad3fe9d1",
+        "0x30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58",
+
+```
+
+
+# Context Management (/tools/cli/commands/context-management)
+
+The Shelby CLI uses contexts to manage different networks and their endpoints, this is useful for quickly switching between different networks
+without having to manually update the configuration file each time. By default, the configuration for the contexts are stored in the `~/.shelby/config.yaml` file.
+
+## `shelby context create`
+
+To create a new context, you can use the `shelby context create` command.
+
+**Interactive Mode**
+
+```bash
+shelby context create 
+```
+
+**Non-interactive Mode**
+
+```bash
+shelby context create --name <CONTEXT_NAME> --shelby-rpc-endpoint <SHELBY_RPC_ENDPOINT> --aptos-network <APTOS_NETWORK>
+```
+
+### Options
+
+| Flag                              | Description                                                     |
+| --------------------------------- | --------------------------------------------------------------- |
+| `--name <context-name>`           | Label for the context.                                          |
+| `--shelby-rpc-endpoint <url>`     | Shelby RPC endpoint (`https://…`).                              |
+| `--shelby-indexer-endpoint <url>` | Shelby indexer endpoint (`https://…`).                          |
+| `--shelby-rpc-api-key <key>`      | API key injected into Shelby RPC requests.                      |
+| `--shelby-indexer-api-key <key>`  | API key injected into Shelby indexer requests.                  |
+| `--aptos-network <network>`       | Aptos network name (`custom`, `local`, `shelbynet`).            |
+| `--aptos-fullnode <url>`          | Override the Aptos fullnode endpoint.                           |
+| `--aptos-indexer <url>`           | Override the Aptos indexer endpoint. Required for blob listing. |
+| `--aptos-faucet <url>`            | Override the Aptos faucet endpoint.                             |
+| `--aptos-pepper <url>`            | Override the Aptos pepper endpoint.                             |
+| `--aptos-prover <url>`            | Override the Aptos prover endpoint.                             |
+| `--aptos-api-key <key>`           | API key injected into Aptos requests.                           |
+
+## `shelby context list`
+
+To list all contexts, you can use the `shelby context list` command.
+
+```bash
+shelby context list
+```
+
+```bash title="Example Output"
+
+Aptos Configurations:
+┌─────────┬─────────┬───────────────────────┬──────────────────────┬──────────────────────┬────────┐
+│ Name    │ Network │ Fullnode              │ Indexer              │ Faucet               │ API    │
+│         │         │                       │                      │                      │ Key    │
+├─────────┼─────────┼───────────────────────┼──────────────────────┼──────────────────────┼────────┤
+│ local   │ local   │ http://127.0.0.1:8080 │ http://127.0.0.1:809 │ http://127.0.0.1:808 │        │
+│         │         │ /v1                   │ 0/v1/graphql         │ 1                    │        │
+├─────────┼─────────┼───────────────────────┼──────────────────────┼──────────────────────┼────────┤
+│ shelbyn │ shelbyn │ https://api.shelbynet │ https://api.shelbyne │ https://faucet.shelb │        │
+│ et (def │ et      │ .shelby.xyz/v1        │ t.shelby.xyz/v1/grap │ ynet.shelby.xyz      │        │
+│ ault)   │         │                       │ hql                  │                      │        │
+└─────────┴─────────┴───────────────────────┴──────────────────────┴──────────────────────┴────────┘
+
+Shelby Configurations:
+┌───────────┬───────────────────────────────┬──────────────────────────────┬───────────┬───────────┐
+│ Name      │ RPC                           │ Indexer                      │ RPC API   │ Indexer   │
+│           │                               │                              │ Key       │ API Key   │
+├───────────┼───────────────────────────────┼──────────────────────────────┼───────────┼───────────┤
+│ local     │ http://localhost:9090/        │                              │           │           │
+├───────────┼───────────────────────────────┼──────────────────────────────┼───────────┼───────────┤
+│ shelbynet │ https://api.shelbynet.shelby. │                              │           │           │
+│ (default) │ xyz/shelby                    │                              │           │           │
+└───────────┴───────────────────────────────┴──────────────────────────────┴───────────┴───────────┘
+```
+
+## `shelby context use`
+
+You can choose a context to use by default by using the `shelby context use` command. This context will automatically be used
+when running any command that requires a context.
+
+```bash
+shelby context use <CONTEXT_NAME>
+```
+
+```bash title="Example Output"
+✅ Now using context 'shelbynet'
+```
+
+## `shelby context update`
+
+Update the configuration for a context in place.
+
+**Interactive Mode**
+
+```bash
+shelby context update <CONTEXT_NAME>
+```
+
+**Non-interactive Mode**
+
+```bash
+shelby context update <CONTEXT_NAME> --shelby-rpc-endpoint <SHELBY_RPC_ENDPOINT> --aptos-network <APTOS_NETWORK> --aptos-indexer <INDEXER_URL>
+```
+
+### Options
+
+| Flag                              | Description                         |
+| --------------------------------- | ----------------------------------- |
+| `--shelby-rpc-endpoint <url>`     | Update the Shelby RPC endpoint.     |
+| `--shelby-indexer-endpoint <url>` | Update the Shelby indexer endpoint. |
+| `--shelby-rpc-api-key <key>`      | Update the Shelby RPC API key.      |
+| `--shelby-indexer-api-key <key>`  | Update the Shelby indexer API key.  |
+| `--aptos-network <network>`       | Update the Aptos network name.      |
+| `--aptos-fullnode <url>`          | Update the Aptos fullnode endpoint. |
+| `--aptos-indexer <url>`           | Update the Aptos indexer endpoint.  |
+| `--aptos-faucet <url>`            | Update the Aptos faucet endpoint.   |
+| `--aptos-pepper <url>`            | Update the Aptos pepper endpoint.   |
+| `--aptos-prover <url>`            | Update the Aptos prover endpoint.   |
+| `--aptos-api-key <key>`           | Update the Aptos API key.           |
+
+## `shelby context delete`
+
+Delete a context from the configuration file.
+
+```bash
+shelby context delete <CONTEXT_NAME>
+```
+
+```bash title="Example Output"
+✅ Context 'shelbynet' deleted successfully
+```
+
+<Callout type="info">
+  The CLI refuses to delete the current default context. Run `shelby context use <other-context>` first if you need to remove it.
+</Callout>
+
+
+# Faucet (/tools/cli/commands/faucet)
+
+## `shelby faucet`
+
+Opens a browser to faucet website for currently active account.
+
+```bash
+shelby faucet
+```
+
+
+# Uploads and Downloads (/tools/cli/commands/uploads-and-downloads)
+
+# Overview
+
+The Shelby CLI provides a number of simple operations for uploading and downloading files.
+
+<Callout type="info">
+  It is important that the CLI is properly configured with a network and funded account. If not, please visit the [Getting Started](/tools/cli) quick start guide for more information.
+</Callout>
+
+## `shelby upload`
+
+Uploads a blob or local directory of blobs to Shelby, using the currently active account as the account to upload to.
+This will charge SHEL tokens.
+
+```bash
+shelby upload [options] <src> <dst>
+```
+
+### Options
+
+| Flag                          | Alias | Type   | Required | Default | Description                                                                  |
+| ----------------------------- | ----- | ------ | -------- | ------- | ---------------------------------------------------------------------------- |
+| `--expiration <datetime>`     | `-e`  | string | yes      | -       | Expiration timestamp.                                                        |
+| `--recursive`                 | `-r`  | flag   |          | false   | Upload every file under a directory.                                         |
+| `--assume-yes`                |       | flag   |          | false   | Skip interactive cost confirmation. Useful for scripts.                      |
+| `--output-commitments <file>` |       | string |          | -       | Persist the generated commitments alongside the upload for later inspection. |
+
+If uploading a single blob, `<dst>` must always be a valid blob name (does not end in `/`, and no more than 1024 characters).
+
+When uploading a directory recursively, `<dst>` must end in `/`.
+
+The `--expiration` option accepts:
+
+* Human language timestamp:
+  * `in 2 days`
+  * `next Friday`
+  * `next month`
+  * `2025-12-31`
+* UNIX timestamp: `1735689600` (seconds since epoch)
+* ISO date string: `"2025-01-01T00:00:00Z"`
+* Human-readable date: `"2025-01-01"` or `"Jan 1, 2025"`
+
+<Callout type="info">
+  The uploaded file list is created before starting the operation.
+  File sizes are saved as the file list is created.
+  If any files change size between the initial listing and the upload, the upload will fail when it reaches the modified files.
+</Callout>
+
+#### Basic Example
+
+```bash
+shelby upload local-video.mp4 shelby-output.mp4 -e <UNIX-EPOCH>
+
+```
+
+#### Relative Paths
+
+```bash
+shelby upload ./local-video.mp4 shelby/blob/name.mp4 -e <UNIX-EPOCH>
+```
+
+#### Other Date Formats
+
+```bash
+shelby upload local-video.mp4 best-videos/video.mp4 --expiration <UNIX-EPOCH>
+shelby upload local-video.mp4 best-videos/video.mp4 -e "2025-12-31"
+shelby upload local-video.mp4 best-videos/video.mp4 -e "2025-12-31T00:00:00Z"
+shelby upload local-video.mp4 best-videos/video.mp4 -e "2025-12-31T00:00:00-0500"
+```
+
+On UNIXes, the `date` command can help too:
+
+```bash
+shelby upload video.mp4 best-videos/video.mp4 -e $(date -d "+1 hour" +%s)
+```
+
+#### Directory Upload Example
+
+```bash
+shelby upload -r ./hls_video/ best-videos/hls_video/ --expiration <UNIX-EPOCH>
+shelby upload --recursive ./website/ my-site/ -e "2025-12-31"
+```
+
+#### Canonical Directory Layout
+
+The upload command will use the canonical filesystem layout when uploading directories recursively.
+
+That is, if the source is laid out as:
+
+```bash
+$ tree .
+.
+|-- bar
+`-- foo
+    |-- baz
+    `-- buzz
+
+2 directories, 3 files
+```
+
+The blobs uploaded to Shelby will have these blob names:
+
+```text
+<account>/<blob-prefix>/bar
+<account>/<blob-prefix>/foo/baz
+<account>/<blob-prefix>/foo/buzz
+```
+
+Note that there is no `<account>/<blob-prefix>/foo` blob in shelby as there is no concept of directory in blob storage.
+It is possible to later upload `<account>/<blob-prefix>/foo` as a separate blob; this would make it difficult to download the directory tree as a directory tree!
+
+## `shelby download`
+
+<Callout type="warn">
+  Currently you cannot download blobs that were uploaded by other accounts with the CLI. This will be fixed in the near future.
+</Callout>
+
+Download a file (or files) from the Shelby network, with progress reporting, for the active account.
+
+```bash
+shelby download [options] <src> <dst>
+```
+
+### Options
+
+| Flag          | Alias | Type | Required | Description                                                                    |
+| ------------- | ----- | ---- | -------- | ------------------------------------------------------------------------------ |
+| `--recursive` | `-r`  | flag |          | Treat `src` as a directory prefix. Both the `src` and `dst` must end with `/`. |
+| `--force`     | `-f`  | flag |          | Overwrite existing files or clear a non-empty directory before downloading.    |
+
+<Callout type="info">
+  The downloader validates filesystem state before fetching data. Create the parent directory ahead of time and supply `--force` if you need to overwrite existing content.
+</Callout>
+
+If downloading a single blob, `<src>` must be a valid blob name (does not end in /).
+The `<dst>` must not end in a directory separator and will be created as a file.
+
+When downloading a directory recursively, both `<src>` and `<dst`> must end in /.
+The `<dst`> directory will be created if it doesn't exist.
+
+Validation Rules:
+
+* The parent directory of `<dst>` must already exist
+* Without --force, the `dst` file must not exist, or must be an empty directory for recursive downloads
+* With --force, any existing `dst` will be completely removed before download
+
+#### Basic example
+
+```bash
+shelby download shelby/blob/name.mp4 ./video.mp4
+```
+
+#### Force Overwrite
+
+```bash
+shelby download shelby/blob/name.mp4 ./existing-video.mp4 --force
+```
+
+#### Directory Download
+
+```bash
+shelby download -r shelby/blobs/best-videos/hls_video/ ./hls_video/
+shelby download --recursive my-site/ ./website/
+```
+
+<Callout type="info">
+  For recursive downloads, both `src` (the blob prefix) and `dst` (the target directory) must end with `/`.
+</Callout>
+
+#### Canonical Directory Layout
+
+When downloading directories, the command recreates the directory structure locally.
+
+If Shelby contains these blobs:
+
+```txt
+my-files/document.pdf
+my-files/images/photo1.jpg
+my-files/images/photo2.jpg
+```
+
+Running:
+
+```bash
+shelby download -r my-files/ ./local-files/
+```
+
+Will create:
+
+```bash
+$ tree ./local-files/
+./local-files/
+├── document.pdf
+└── images/
+    ├── photo1.jpg
+    └── photo2.jpg
+```
+
+The download command automatically creates any necessary subdirectories and downloads all files.
+
+#### Other Account's Files
+
+For now, the CLI only interacts with active account in the CLI's context.
+
+Files from other accounts are downloadable using the REST interface from the RPC node, which currently does not require any additional headers or session information for payment.
+
+In general:
+
+```bash
+curl https://api.shelbynet.shelby.xyz/shelby/v1/blobs/<account>/<blob-name>
+```
+
+For example, if I want to download the blob `foo` stored by account `0x89ca7dfadf5788830b0d5826a56b370ced0d7938c4628f4b57f346ab54f76357` I can use:
+
+```bash
+curl https://api.shelbynet.shelby.xyz/shelby/v1/blobs/0x89ca7dfadf5788830b0d5826a56b370ced0d7938c4628f4b57f346ab54f76357/foo
+```
+
+
+# Complete a multipart upload (/apis/rpc/localhost/multipart-uploads/completeMultipartUpload)
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+Complete a multipart upload session.
+
+<APIPage document={"../server/openapi/openapi-localhost.json"} operations={[{"path":"/v1/multipart-uploads/{uploadId}/complete","method":"post"}]} webhooks={[]} hasHead={false} />
+
+
+# Begin a multipart upload (/apis/rpc/localhost/multipart-uploads/startMultipartUpload)
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+Begin a multipart upload session.
+
+<APIPage document={"../server/openapi/openapi-localhost.json"} operations={[{"path":"/v1/multipart-uploads","method":"post"}]} webhooks={[]} hasHead={false} />
+
+
+# Upload a part (/apis/rpc/localhost/multipart-uploads/uploadPart)
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+Upload a part for a multipart upload session.
+
+<APIPage document={"../server/openapi/openapi-localhost.json"} operations={[{"path":"/v1/multipart-uploads/{uploadId}/parts/{partIdx}","method":"put"}]} webhooks={[]} hasHead={false} />
+
+
+# Create a micropayment channel (/apis/rpc/localhost/sessions/createMicropaymentChannel)
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+Create a micropayment channel for a user. (This is WIP and will be replaced by real blockchain integration.)
+
+<APIPage document={"../server/openapi/openapi-localhost.json"} operations={[{"path":"/v1/sessions/micropaymentchannels","method":"post"}]} webhooks={[]} hasHead={false} />
+
+
+# Create a session (/apis/rpc/localhost/sessions/createSession)
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+Create a session for a user with a pre-existing micropayment channel.
+
+<APIPage document={"../server/openapi/openapi-localhost.json"} operations={[{"path":"/v1/sessions","method":"post"}]} webhooks={[]} hasHead={false} />
+
+
+# Use a session (/apis/rpc/localhost/sessions/useSession)
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+Use a session, decrementing the number of chunksets left.
+
+<APIPage document={"../server/openapi/openapi-localhost.json"} operations={[{"path":"/v1/sessions/{sessionId}/use","method":"post"}]} webhooks={[]} hasHead={false} />
+
+
+# Retrieve a blob (/apis/rpc/localhost/storage/getBlob)
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+Retrieve a blob or a byte range of a blob.
+
+<APIPage document={"../server/openapi/openapi-localhost.json"} operations={[{"path":"/v1/blobs/{account}/{blobName}","method":"get"}]} webhooks={[]} hasHead={false} />
+
+
+# Upload a blob (/apis/rpc/localhost/storage/uploadBlob)
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+Upload a blob.
+
+<APIPage document={"../server/openapi/openapi-localhost.json"} operations={[{"path":"/v1/blobs/{account}/{blobName}","method":"put"}]} webhooks={[]} hasHead={false} />
+
+
+# Complete a multipart upload (/apis/rpc/shelbynet/multipart-uploads/completeMultipartUpload)
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+Complete a multipart upload session.
+
+<APIPage document={"../server/openapi/openapi-shelbynet.json"} operations={[{"path":"/v1/multipart-uploads/{uploadId}/complete","method":"post"}]} webhooks={[]} hasHead={false} />
+
+
+# Begin a multipart upload (/apis/rpc/shelbynet/multipart-uploads/startMultipartUpload)
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+Begin a multipart upload session.
+
+<APIPage document={"../server/openapi/openapi-shelbynet.json"} operations={[{"path":"/v1/multipart-uploads","method":"post"}]} webhooks={[]} hasHead={false} />
+
+
+# Upload a part (/apis/rpc/shelbynet/multipart-uploads/uploadPart)
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+Upload a part for a multipart upload session.
+
+<APIPage document={"../server/openapi/openapi-shelbynet.json"} operations={[{"path":"/v1/multipart-uploads/{uploadId}/parts/{partIdx}","method":"put"}]} webhooks={[]} hasHead={false} />
+
+
+# Create a micropayment channel (/apis/rpc/shelbynet/sessions/createMicropaymentChannel)
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+Create a micropayment channel for a user. (This is WIP and will be replaced by real blockchain integration.)
+
+<APIPage document={"../server/openapi/openapi-shelbynet.json"} operations={[{"path":"/v1/sessions/micropaymentchannels","method":"post"}]} webhooks={[]} hasHead={false} />
+
+
+# Create a session (/apis/rpc/shelbynet/sessions/createSession)
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+Create a session for a user with a pre-existing micropayment channel.
+
+<APIPage document={"../server/openapi/openapi-shelbynet.json"} operations={[{"path":"/v1/sessions","method":"post"}]} webhooks={[]} hasHead={false} />
+
+
+# Use a session (/apis/rpc/shelbynet/sessions/useSession)
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+Use a session, decrementing the number of chunksets left.
+
+<APIPage document={"../server/openapi/openapi-shelbynet.json"} operations={[{"path":"/v1/sessions/{sessionId}/use","method":"post"}]} webhooks={[]} hasHead={false} />
+
+
+# Retrieve a blob (/apis/rpc/shelbynet/storage/getBlob)
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+Retrieve a blob or a byte range of a blob.
+
+<APIPage document={"../server/openapi/openapi-shelbynet.json"} operations={[{"path":"/v1/blobs/{account}/{blobName}","method":"get"}]} webhooks={[]} hasHead={false} />
+
+
+# Upload a blob (/apis/rpc/shelbynet/storage/uploadBlob)
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+Upload a blob.
+
+<APIPage document={"../server/openapi/openapi-shelbynet.json"} operations={[{"path":"/v1/blobs/{account}/{blobName}","method":"put"}]} webhooks={[]} hasHead={false} />
+
+
+# FullscreenButton (/sdks/media-player/components/buttons/fullscreen-button)
+
+Button component that toggles fullscreen mode for the player.
+
+## Examples
+
+### Basic Usage
+
+```tsx
+import {
+  SimpleShakaVideoPlayer,
+  VideoOutlet,
+  Poster,
+  Controls,
+  ControlsGroup,
+  FullscreenButton,
+} from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <Controls>
+        <ControlsGroup className="p-4">
+          <div className="flex-1" />
+          <FullscreenButton />
+        </ControlsGroup>
+      </Controls>
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+### With Other Controls
+
+```tsx
+import {
+  SimpleShakaVideoPlayer,
+  VideoOutlet,
+  Poster,
+  Controls,
+  ControlsGroup,
+  PlayButton,
+  VolumeButton,
+  FullscreenButton,
+} from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <Controls>
+        <ControlsGroup className="p-4">
+          <PlayButton />
+          <VolumeButton />
+          <div className="flex-1" />
+          <FullscreenButton />
+        </ControlsGroup>
+      </Controls>
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+
+# PipButton (/sdks/media-player/components/buttons/pip-button)
+
+Button component that toggles picture-in-picture mode. The button automatically hides if Picture-in-Picture is not supported by the browser.
+
+## Examples
+
+### Basic Usage
+
+```tsx
+import {
+  SimpleShakaVideoPlayer,
+  VideoOutlet,
+  Poster,
+  Controls,
+  ControlsGroup,
+  PipButton,
+} from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <Controls>
+        <ControlsGroup className="p-4">
+          <div className="flex-1" />
+          <PipButton />
+        </ControlsGroup>
+      </Controls>
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+### With Other Controls
+
+```tsx
+import {
+  SimpleShakaVideoPlayer,
+  VideoOutlet,
+  Poster,
+  Controls,
+  ControlsGroup,
+  PlayButton,
+  PipButton,
+  FullscreenButton,
+} from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <Controls>
+        <ControlsGroup className="p-4">
+          <PlayButton />
+          <div className="flex-1" />
+          <PipButton />
+          <FullscreenButton />
+        </ControlsGroup>
+      </Controls>
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+
+# PlayButton (/sdks/media-player/components/buttons/play-button)
+
+Button component that toggles play/pause state. Automatically shows the appropriate icon based on playback state.
+
+## Examples
+
+### Basic Usage
+
+```tsx
+import {
+  SimpleShakaVideoPlayer,
+  VideoOutlet,
+  Poster,
+  Controls,
+  ControlsGroup,
+  PlayButton,
+} from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <Controls>
+        <ControlsGroup className="p-4">
+          <PlayButton />
+        </ControlsGroup>
+      </Controls>
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+### With Other Controls
+
+```tsx
+import {
+  SimpleShakaVideoPlayer,
+  VideoOutlet,
+  Poster,
+  Controls,
+  ControlsGroup,
+  PlayButton,
+  VolumeButton,
+  MediaTime,
+} from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <Controls>
+        <ControlsGroup className="p-4">
+          <PlayButton /> 
+          <VolumeButton />
+          <MediaTime /> 
+        </ControlsGroup>
+      </Controls>
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+
+# VolumeButton (/sdks/media-player/components/buttons/volume-button)
+
+Button component for controlling volume and mute state. Includes visual feedback for volume level with a slider that appears on hover. The slider appears on hover, closes when clicking outside, and automatically mutes/unmutes based on volume level.
+
+## Examples
+
+### Basic Usage
+
+```tsx
+import {
+  SimpleShakaVideoPlayer,
+  VideoOutlet,
+  Poster,
+  Controls,
+  ControlsGroup,
+  PlayButton,
+  VolumeButton,
+} from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <Controls>
+        <ControlsGroup className="p-4">
+          <PlayButton />
+          <VolumeButton />
+        </ControlsGroup>
+      </Controls>
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+
+# ControlsGroup (/sdks/media-player/components/controls/controls-group)
+
+Groups related controls together. Controls within a group appear/disappear together based on player state.
+
+## Props
+
+<AutoTypeTable path="../../packages/player/src/index.ts" name="ControlsGroupProps" />
+
+## Examples
+
+### Basic Usage
+
+```tsx
+import { Controls, ControlsGroup, PlayButton, VolumeButton } from "@shelby-protocol/player";
+
+function CustomControls() {
+  return (
+    <Controls>
+      <ControlsGroup className="p-4">
+        <PlayButton />
+        <VolumeButton />
+      </ControlsGroup>
+    </Controls>
+  );
+}
+```
+
+### Multiple Groups
+
+```tsx
+import { Controls, ControlsGroup, TimeSlider, PlayButton, MediaTime } from "@shelby-protocol/player";
+
+function CustomControls() {
+  return (
+    <Controls>
+      <div className="flex-1" />
+      <ControlsGroup className="px-4 w-full">
+        <TimeSlider />
+      </ControlsGroup>
+      <ControlsGroup className="p-4">
+        <PlayButton />
+        <MediaTime />
+      </ControlsGroup>
+    </Controls>
+  );
+}
+```
+
+### With Custom Styling
+
+```tsx
+import { Controls, ControlsGroup, PlayButton, FullscreenButton } from "@shelby-protocol/player";
+
+function CustomControls() {
+  return (
+    <Controls>
+      <ControlsGroup className="p-4 bg-gradient-to-t from-black/80 to-transparent">
+        <PlayButton className="hover:scale-110 transition-transform" />
+        <div className="flex-1" />
+        <FullscreenButton className="hover:scale-110 transition-transform" />
+      </ControlsGroup>
+    </Controls>
+  );
+}
+```
+
+
+# Controls (/sdks/media-player/components/controls/controls)
+
+Root container for player controls. Provides the base structure and styling for control overlays.
+
+## Props
+
+<AutoTypeTable path="../../packages/player/src/index.ts" name="ControlsProps" />
+
+## Examples
+
+### Basic Usage
+
+```tsx
+import { Controls, ControlsGroup, PlayButton, MediaTime } from "@shelby-protocol/player";
+
+function CustomControls() {
+  return (
+    <Controls>
+      <ControlsGroup className="p-4">
+        <PlayButton />
+        <MediaTime />
+      </ControlsGroup>
+    </Controls>
+  );
+}
+```
+
+### Multiple Control Groups
+
+```tsx
+import { Controls, ControlsGroup, PlayButton, VolumeButton, FullscreenButton } from "@shelby-protocol/player";
+
+function CustomControls() {
+  return (
+    <Controls>
+      <div className="flex-1" />
+      <ControlsGroup className="p-4">
+        <PlayButton />
+        <VolumeButton />
+        <div className="flex-1" />
+        <FullscreenButton />
+      </ControlsGroup>
+    </Controls>
+  );
+}
+```
+
+
+# MediaTime (/sdks/media-player/components/display/media-time)
+
+Displays the current playback time and total duration in a formatted string (e.g., "1:23 / 5:45" or "1:02:03 / 2:15:45"). Format is `MM:SS / MM:SS` for shorter videos and `HH:MM:SS / HH:MM:SS` for videos longer than an hour.
+
+## Examples
+
+### Basic Usage
+
+```tsx
+import {
+  SimpleShakaVideoPlayer,
+  VideoOutlet,
+  Poster,
+  Controls,
+  ControlsGroup,
+  PlayButton,
+  MediaTime,
+} from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <Controls>
+        <ControlsGroup className="p-4">
+          <PlayButton />
+          <MediaTime />
+        </ControlsGroup>
+      </Controls>
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+### With Other Controls
+
+```tsx
+import {
+  SimpleShakaVideoPlayer,
+  VideoOutlet,
+  Poster,
+  Controls,
+  ControlsGroup,
+  PlayButton,
+  VolumeButton,
+  MediaTime,
+  MediaTitle,
+} from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <Controls>
+        <ControlsGroup className="p-4">
+          <PlayButton />
+          <VolumeButton />
+          <MediaTime />
+          <MediaTitle />
+        </ControlsGroup>
+      </Controls>
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+
+# MediaTitle (/sdks/media-player/components/display/media-title)
+
+Displays the video title. Automatically shows "Ad" instead of the video title when an ad is playing.
+
+## Examples
+
+### Basic Usage
+
+```tsx
+import {
+  SimpleShakaVideoPlayer,
+  VideoOutlet,
+  Poster,
+  Controls,
+  ControlsGroup,
+  MediaTitle,
+} from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <Controls>
+        <ControlsGroup className="p-4">
+          <MediaTitle />
+        </ControlsGroup>
+      </Controls>
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+### With Other Controls
+
+```tsx
+import {
+  SimpleShakaVideoPlayer,
+  VideoOutlet,
+  Poster,
+  Controls,
+  ControlsGroup,
+  PlayButton,
+  MediaTime,
+  MediaTitle,
+} from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <Controls>
+        <ControlsGroup className="p-4">
+          <PlayButton />
+          <MediaTime />
+          <MediaTitle />
+        </ControlsGroup>
+      </Controls>
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+
+# Poster (/sdks/media-player/components/display/poster)
+
+Displays a poster image before playback starts. Automatically hides when playback begins with a smooth fade transition. Only displays if `poster` prop is provided to `PlayerProvider`.
+
+## Props
+
+<AutoTypeTable path="../../packages/player/src/index.ts" name="PosterProps" />
+
+## Examples
+
+### Basic Usage
+
+```tsx
+import { SimpleShakaVideoPlayer, VideoOutlet, Poster, DefaultLayout } from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <DefaultLayout />
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+### With Alt Text
+
+```tsx
+import { SimpleShakaVideoPlayer, VideoOutlet, Poster, DefaultLayout } from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster alt="Video thumbnail" />
+      </VideoOutlet>
+      <DefaultLayout />
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+
+# TimeSlider (/sdks/media-player/components/display/time-slider)
+
+Slider component for seeking through the video. Displays progress and allows scrubbing. Automatically disables during non-skippable ads and changes color when ads are playing (yellow for ads, default for normal playback).
+
+## Examples
+
+### Basic Usage
+
+```tsx
+import {
+  SimpleShakaVideoPlayer,
+  VideoOutlet,
+  Poster,
+  Controls,
+  ControlsGroup,
+  TimeSlider,
+} from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <Controls>
+        <ControlsGroup className="px-4 w-full">
+          <TimeSlider />
+        </ControlsGroup>
+      </Controls>
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+### With Other Controls
+
+```tsx
+import {
+  SimpleShakaVideoPlayer,
+  VideoOutlet,
+  Poster,
+  Controls,
+  ControlsGroup,
+  TimeSlider,
+  PlayButton,
+  MediaTime,
+} from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <Controls>
+        <div className="flex-1" />
+        <ControlsGroup className="px-4 w-full">
+          <TimeSlider />
+        </ControlsGroup>
+        <ControlsGroup className="p-4">
+          <PlayButton />
+          <MediaTime />
+        </ControlsGroup>
+      </Controls>
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+
+# DefaultLayout (/sdks/media-player/components/layout/default-layout)
+
+A pre-built layout component that includes all standard player controls arranged in a common pattern. This is the easiest way to get a fully functional player UI.
+
+## Examples
+
+### Basic Usage
+
+```tsx
+import { SimpleShakaVideoPlayer, VideoOutlet, Poster, DefaultLayout } from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <DefaultLayout />
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+
+# PlayerContainer (/sdks/media-player/components/layout/player-container)
+
+Container component that manages player state and control visibility. Automatically shows/hides controls based on user interaction and manages hover states.
+
+## Props
+
+<AutoTypeTable path="../../packages/player/src/index.ts" name="PlayerContainerProps" />
+
+## Examples
+
+`PlayerContainer` is typically used internally by `SimpleShakaVideoPlayer`, but you can use it directly if needed:
+
+```tsx
+import { PlayerProvider, PlayerContainer, VideoOutlet, Controls } from "@shelby-protocol/player";
+
+function CustomPlayer() {
+  return (
+    <PlayerProvider
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <PlayerContainer className="rounded-lg overflow-hidden">
+        <VideoOutlet>
+          <Poster />
+        </VideoOutlet>
+        <Controls>
+          {/* Your custom controls */}
+        </Controls>
+      </PlayerContainer>
+    </PlayerProvider>
+  );
+}
+```
+
+
+# VideoOutlet (/sdks/media-player/components/layout/video-outlet)
+
+Container for the video element. Renders the `<video>` element and handles click-to-play functionality.
+
+## Props
+
+| Property   | Type              | Description                           |
+| ---------- | ----------------- | ------------------------------------- |
+| `children` | `React.ReactNode` | Child components (typically `Poster`) |
+
+## Examples
+
+### Basic Usage
+
+```tsx
+import { SimpleShakaVideoPlayer, VideoOutlet, Poster, DefaultLayout } from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <DefaultLayout />
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+
+# PlaybackSpeedSubMenu (/sdks/media-player/components/menus/playback-speed-sub-menu)
+
+Submenu component for selecting playback speed. Provides common speed options (0.5x, 1x, 1.5x, 2x). The current speed is displayed in the format "Playback Speed 1.5x".
+
+## Examples
+
+### Basic Usage
+
+```tsx
+import {
+  SimpleShakaVideoPlayer,
+  VideoOutlet,
+  Poster,
+  Controls,
+  ControlsGroup,
+  DropdownMenu,
+  DropdownMenuContent,
+  SettingsMenuButton,
+  QualitiesSubMenu,
+  PlaybackSpeedSubMenu,
+} from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <Controls>
+        <ControlsGroup className="p-4">
+          <div className="flex-1" />
+          <DropdownMenu>
+            <SettingsMenuButton />
+            <DropdownMenuContent side="top" align="end">
+              <QualitiesSubMenu />
+              <PlaybackSpeedSubMenu />
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </ControlsGroup>
+      </Controls>
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+
+# QualitiesSubMenu (/sdks/media-player/components/menus/qualities-sub-menu)
+
+Submenu component for selecting video quality/bitrate. Lists available tracks sorted by height and allows manual selection or enabling adaptive bitrate (Auto). Displays qualities in the format "Auto", "1080p", "720p", "480p", etc., depending on available tracks.
+
+## Examples
+
+### Basic Usage
+
+```tsx
+import {
+  SimpleShakaVideoPlayer,
+  VideoOutlet,
+  Poster,
+  Controls,
+  ControlsGroup,
+  DropdownMenu,
+  DropdownMenuContent,
+  SettingsMenuButton,
+  QualitiesSubMenu,
+  PlaybackSpeedSubMenu,
+} from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <Controls>
+        <ControlsGroup className="p-4">
+          <div className="flex-1" />
+          <DropdownMenu>
+            <SettingsMenuButton />
+            <DropdownMenuContent side="top" align="end">
+              <QualitiesSubMenu />
+              <PlaybackSpeedSubMenu />
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </ControlsGroup>
+      </Controls>
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+
+# SettingsMenuButton (/sdks/media-player/components/menus/settings-menu-button)
+
+Button that opens the settings dropdown menu containing quality and playback speed options. Must be used inside a `DropdownMenu` component.
+
+## Examples
+
+### Basic Usage
+
+```tsx
+import {
+  SimpleShakaVideoPlayer,
+  VideoOutlet,
+  Poster,
+  Controls,
+  ControlsGroup,
+  DropdownMenu,
+  DropdownMenuContent,
+  SettingsMenuButton,
+  QualitiesSubMenu,
+  PlaybackSpeedSubMenu,
+} from "@shelby-protocol/player";
+
+function VideoPlayer() {
+  return (
+    <SimpleShakaVideoPlayer
+      src="https://example.com/video.m3u8"
+      poster="https://example.com/poster.jpg"
+      title="My Video"
+    >
+      <VideoOutlet>
+        <Poster />
+      </VideoOutlet>
+      <Controls>
+        <ControlsGroup className="p-4">
+          <div className="flex-1" />
+          <DropdownMenu>
+            <SettingsMenuButton />
+            <DropdownMenuContent side="top" align="end">
+              <QualitiesSubMenu />
+              <PlaybackSpeedSubMenu />
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </ControlsGroup>
+      </Controls>
+    </SimpleShakaVideoPlayer>
+  );
+}
+```
+
+
+# Downloading Files (/sdks/typescript/browser/guides/download)
+
+## Overview
+
+This guide demonstrates how to retrieve and download files stored on the Shelby network from a browser environment. Files on Shelby are associated with the account address of the uploader and can be accessed through both direct URLs and the SDK API.
+
+## Prerequisites
+
+Before downloading files, ensure you have:
+
+* The Shelby SDK installed and configured
+* Access to the account address of the file uploader
+* A valid API key for the Shelby network
+
+## Download Methods
+
+### Method 1: Direct URL Access
+
+Files stored on Shelby can be accessed directly via HTTP using a predictable URL pattern:
+
+```
+https://api.shelbynet.shelby.xyz/shelby/v1/blobs/<uploader-address>/<file-name>.<file-extension>
+```
+
+**URL Structure:**
+
+* `<uploader-address>`: The Aptos account address that uploaded the file
+* `<file-name>`: The original name of the uploaded file
+* `<file-extension>`: The file extension (e.g., `.txt`, `.pdf`, `.jpg`)
+
+**Example:**
+
+```
+https://api.shelbynet.shelby.xyz/shelby/v1/blobs/0x123.../document.pdf
+```
+
+### Method 2: SDK API Access
+
+The Shelby SDK provides programmatic access to retrieve file metadata and download files.
+
+#### Initialize the Client
+
+First, configure the Shelby client for your browser environment:
+
+```typescript
+import { ShelbyClient } from "@shelby-protocol/sdk/browser";
+import { Network } from "@aptos-labs/ts-sdk";
+
+const shelbyClient = new ShelbyClient({
+  network: Network.SHELBYNET,
+  apiKey: process.env.SHELBY_API_KEY,
+});
+```
+
+#### Retrieve Account Files
+
+Get a list of all files associated with a specific account:
+
+```typescript
+const blobs = await shelbyClient.coordination.getAccountBlobs({
+  account: accountAddress,
+});
+```
+
+This returns an array containing metadata for all files uploaded by the specified account, including:
+
+* File names
+* Upload timestamps
+* File sizes
+* Expiration dates
+* Blob merkle roots
+
+#### Download Specific Files
+
+Once you have the file metadata, you can download specific files using the blob information:
+
+```typescript
+// Example: Download the first file from the account
+if (blobs.length > 0) {
+  const firstBlob = blobs[0];
+
+  // Construct download URL
+  const downloadUrl = `https://api.shelbynet.shelby.xyz/shelby/v1/blobs/${accountAddress}/${firstBlob.name}`;
+
+  // Fetch the file
+  const response = await fetch(downloadUrl);
+  const fileData = await response.blob();
+
+  // Create download link for user
+  const downloadLink = document.createElement("a");
+  downloadLink.href = URL.createObjectURL(fileData);
+  downloadLink.download = firstBlob.name;
+  downloadLink.click();
+}
+```
+
+## Error Handling
+
+When downloading files, handle common error scenarios:
+
+```typescript
+try {
+  const blobs = await shelbyClient.coordination.getAccountBlobs({
+    account: accountAddress,
+  });
+
+  if (blobs.length === 0) {
+    console.log("No files found for this account");
+    return;
+  }
+
+  // Process files...
+} catch (error) {
+  if (error.message.includes("404")) {
+    console.error("Account or file not found");
+  } else if (error.message.includes("403")) {
+    console.error("Access denied - check API key");
+  } else {
+    console.error("Download failed:", error.message);
+  }
+}
+```
+
+
+# Uploading a File (/sdks/typescript/browser/guides/upload)
+
+import { Step, Steps } from "fumadocs-ui/components/steps";
+import ShelbyUSDFaucet from "@/components/faucet/ShelbyUSDFaucet";
+
+## Prerequisites
+
+This guide demonstrates how to upload files to the Shelby network from a browser environment. Before proceeding, ensure you have:
+
+* A basic understanding of React and TypeScript
+* An Aptos wallet configured for the Shelby network
+* ShelbyUSD tokens for file uploads (1 ShelbyUSD per upload)
+
+## Environment Setup
+
+To integrate with Aptos wallets, this guide uses the [Aptos Wallet Adapter package](https://aptos.dev/build/sdks/wallet-adapter/dapp). Follow these steps to configure your environment:
+
+<Steps>
+  <Step>
+    ### Install the Wallet Adapter Package
+
+    Install the required wallet adapter dependency:
+
+    ```bash
+    npm install @aptos-labs/wallet-adapter-react
+    ```
+  </Step>
+
+  <Step>
+    ### Configure the Wallet Provider
+
+    Initialize the `AptosWalletAdapterProvider` in your application:
+
+    ```typescript
+    import { AptosWalletAdapterProvider } from "@aptos-labs/wallet-adapter-react";
+    import { PropsWithChildren } from "react";
+    import { Network } from "@aptos-labs/ts-sdk";
+
+    export const WalletProvider = ({ children }: PropsWithChildren) => {
+    return (
+      <AptosWalletAdapterProvider
+        autoConnect={true}
+        dappConfig={{
+          network: Network.SHELBYNET,
+          aptosApiKeys: {
+            shelbynet: process.env.SHELBYNET_API_KEY
+          }
+        }}
+        onError={(error) => {
+          console.log("Wallet connection error:", error);
+        }}
+      >
+        {children}
+      </AptosWalletAdapterProvider>
+    );
+    };
+    ```
+  </Step>
+</Steps>
+
+## File Upload Process
+
+Uploading a file to the Shelby network involves three sequential steps:
+
+1. **File Encoding**: Split the file into chunks and generate commitment hashes
+2. **On-Chain Registration**: Submit a transaction to register the file metadata
+3. **RPC Upload**: Upload the actual file data to Shelby storage providers
+
+### Step 1: File Encoding
+
+File encoding involves splitting the file into chunks, generating commitment hashes for each chunk, and creating a blob merkle root hash. These hashes are used for verification with storage providers.
+
+```typescript
+import {
+  type BlobCommitments,
+  createDefaultErasureCodingProvider,
+  generateCommitments,
+} from "@shelby-protocol/sdk/browser";
+
+export const encodeFile = async (file: File): Promise<BlobCommitments> => {
+  // Convert file to Buffer format
+  const data = Buffer.isBuffer(file)
+    ? file
+    : Buffer.from(await file.arrayBuffer());
+
+  // Create the erasure coding provider
+  const provider = await createDefaultErasureCodingProvider();
+
+  // Generate commitment hashes for the file
+  const commitments = await generateCommitments(provider, data);
+
+  return commitments;
+};
+```
+
+### Step 2: On-Chain Registration
+
+Before uploading, ensure your account has sufficient ShelbyUSD tokens. Visit the [Shelby faucet](../../../../apis/faucet/shelbyusd) to fund your account if needed.
+
+Register the file metadata on the Aptos blockchain by creating and submitting a transaction:
+
+```typescript
+import {
+  expectedTotalChunksets,
+  ShelbyBlobClient,
+} from "@shelby-protocol/sdk/browser";
+
+// Create the registration transaction payload
+const payload = ShelbyBlobClient.createRegisterBlobPayload({
+  account: account.address,
+  blobName: file.name,
+  blobMerkleRoot: commitments.blob_merkle_root,
+  numChunksets: expectedTotalChunksets(commitments.raw_data_size),
+  expirationMicros: (1000 * 60 * 60 * 24 * 30 + Date.now()) * 1000, // 30 days from now
+  blobSize: commitments.raw_data_size,
+});
+```
+
+Submit the transaction using the wallet adapter:
+
+Ensure your wallet is configured for the Shelby network. Petra (and some other wallets) wallet lets you define a custom network, create one called `shelbynet` and use these settings:
+
+* **Node URL**: [https://api.shelbynet.shelby.xyz/v1](https://api.shelbynet.shelby.xyz/v1)
+* **Faucet URL**: [https://faucet.shelbynet.shelby.xyz](https://faucet.shelbynet.shelby.xyz)
+* **Indexer URL**: [https://api.shelbynet.shelby.xyz/v1/graphql](https://api.shelbynet.shelby.xyz/v1/graphql)
+
+In addition, to upload a file, you will need your account to have two assets:
+
+* **APT tokens**: Used to pay for gas fees when sending transactions
+* **ShelbyUSD tokens**: Used to pay for the upload the file to the Shelby network
+
+To fund your account with ShelbyUSD tokens, you can provide your account address to the **Shelby Faucet** found below.
+
+<ShelbyUSDFaucet />
+
+Submit the previously created register blob payload with the wallet
+
+```typescript
+import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
+import {
+  type InputTransactionData,
+  useWallet,
+} from "@aptos-labs/wallet-adapter-react";
+
+const { signAndSubmitTransaction } = useWallet();
+
+// Submit the registration transaction
+const transaction: InputTransactionData = {
+  data: payload,
+};
+
+const transactionSubmitted = await signAndSubmitTransaction(transaction);
+
+// Initialize Aptos client
+export const aptosClient = new Aptos(
+  new AptosConfig({
+    network: Network.SHELBYNET,
+    clientConfig: {
+      API_KEY: process.env.APTOS_API_KEY,
+    },
+  })
+);
+
+// Wait for transaction confirmation
+await aptosClient.waitForTransaction({
+  transactionHash: transactionSubmitted.hash,
+});
+```
+
+### Step 3: RPC Upload
+
+After successful on-chain registration, upload the file data to the Shelby RPC. The RPC validates the file against the registered commitment hashes before accepting the upload.
+
+**Important**: The RPC upload must occur after on-chain registration, as the RPC verifies the file's registration status before processing the upload.
+
+```typescript
+import { ShelbyClient } from "@shelby-protocol/sdk/browser";
+import { Network } from "@aptos-labs/ts-sdk";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
+
+const { account } = useWallet();
+
+// Initialize Shelby client
+const shelbyClient = new ShelbyClient({
+  network: Network.SHELBYNET,
+  apiKey: process.env.SHELBY_API_KEY,
+});
+
+// Upload file data to Shelby RPC
+await shelbyClient.rpc.putBlob({
+  account: account.address,
+  blobName: file.name,
+  blobData: new Uint8Array(await file.arrayBuffer()),
+});
+```
+
+After successful upload, your file is stored on the Shelby network and can be retrieved using the download functionality.
+
+
+# Manually Uploading a File (/sdks/typescript/node/guides/manually-uploading-file)
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+# Overview
+
+In this guide, we will walk you through the process of manually uploading a file to the Shelby network from a Node.js environment. As opposed to the [Uploading a File](/sdks/typescript/node/guides/uploading-file) guide,
+this guide will go through the end-to-end process of generating commitments, writing them to the coordination layer, and then confirming them through the RPC layer.
+
+<Callout type="info">
+  This guide assumes you already have a Node.js environment setup and will be using the Shelbynet network.
+</Callout>
+
+## Getting Started
+
+<Steps>
+  <Step>
+    ### Installation and Setup
+
+    This guide assumes you already have a basic understanding of the [Uploading a File](/sdks/typescript/node/guides/uploading-file) guide. If you do not, please refer to that guide first before proceeding.
+  </Step>
+
+  <Step>
+    ### Generating Commitments
+
+    The first step before uploading a file is to generate the commitments for the file. This can be done by using the `generateCommitments` function from the SDK.
+
+    <Callout type="info">
+      The SDK now supports automatic provider management. If you're using a single client, you don't need to create a provider manually. For advanced use cases where you need to share a provider across multiple clients, see the example below.
+    </Callout>
+
+    ```typescript title="uploadScript.ts"
+    import { Ed25519Account, Ed25519PrivateKey, Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
+    import { ShelbyNodeClient, ClayErasureCodingProvider, generateCommitments } from "@shelby-protocol/sdk/node";
+    import fs from "fs/promises";
+
+    // 1. Setup your signer
+    const signer = new Ed25519Account({
+      privateKey: new Ed25519PrivateKey("ed25519-priv-<value_of_private_key_from_config.yaml>"),
+    });
+
+    // 2. Setup your client (provider will be created automatically)
+    const aptosClient = new Aptos(new AptosConfig({ network: Network.SHELBYNET }));
+    const shelbyClient = new ShelbyNodeClient({
+      network: Network.SHELBYNET,
+    });
+
+    // 3. Generate the commitments
+    const blobData = await fs.readFile("file.txt");
+    // Option A: Create provider explicitly (for direct use with generateCommitments)
+    const provider = await ClayErasureCodingProvider.create();
+    const blobCommitments = await generateCommitments(provider, blobData);
+
+    // Option B: Pass provider to client (for sharing across multiple clients)
+    // const provider = await ClayErasureCodingProvider.create();
+    // const shelbyClient = new ShelbyNodeClient(config, provider);
+    ```
+  </Step>
+
+  <Step>
+    ### Writing Commitments to the Coordination Layer
+
+    The next step is to write the commitments to the coordination layer. This can be done by using the `registerBlob` function on the `ShelbyBlobClient` class (accessible via `client.coordination`).
+
+    ```typescript title="uploadScript.ts"
+    import { Ed25519Account, Ed25519PrivateKey, Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
+    import { ShelbyNodeClient, ClayErasureCodingProvider, generateCommitments } from "@shelby-protocol/sdk/node";
+    import fs from "fs/promises";
+
+    // 1. Setup your signer
+    const signer = new Ed25519Account({
+      privateKey: new Ed25519PrivateKey("ed25519-priv-<value_of_private_key_from_config.yaml>"),
+    });
+
+    // 2. Setup your client
+    const aptosClient = new Aptos(new AptosConfig({ network: Network.SHELBYNET }));
+    const shelbyClient = new ShelbyNodeClient({
+      network: Network.SHELBYNET,
+    });
+
+    // 3. Generate the commitments
+    const blobData = await fs.readFile("file.txt");
+    // Create provider explicitly for use with generateCommitments
+    const provider = await ClayErasureCodingProvider.create();
+    const blobCommitments = await generateCommitments(provider, blobData);
+
+    // 4. Write the commitments to the coordination layer
+    const { transaction: pendingWriteBlobCommitmentsTransaction } =
+      await shelbyClient.coordination.registerBlob({
+        account: signer,
+        blobName: "path/to/file.txt",
+        blobMerkleRoot: blobCommitments.blob_merkle_root,
+        size: blobData.length,
+        expirationMicros: (1000 * 60 * 60 * 24 * 30 + Date.now()) * 1000, // 30 days
+      });
+
+    await aptosClient.waitForTransaction({
+      transactionHash: pendingWriteBlobCommitmentsTransaction.hash,
+    });
+    ```
+  </Step>
+
+  <Step>
+    ### Confirming Commitments through the RPC Layer
+
+    Once the commitments have been written to the coordination layer, we can now confirm them through the RPC layer. This can be done by using the `putBlob` function on the `ShelbyRPCClient` class.
+
+    ```typescript title="uploadScript.ts"
+    import { Ed25519Account, Ed25519PrivateKey, Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
+    import { ShelbyNodeClient, ClayErasureCodingProvider, generateCommitments } from "@shelby-protocol/sdk/node";
+    import fs from "fs/promises";
+
+    // 1. Setup your signer
+    const signer = new Ed25519Account({
+      privateKey: new Ed25519PrivateKey("ed25519-priv-<value_of_private_key_from_config.yaml>"),
+    });
+
+    // 2. Setup your client
+    const aptosClient = new Aptos(new AptosConfig({ network: Network.SHELBYNET }));
+    const shelbyClient = new ShelbyNodeClient({
+      network: Network.SHELBYNET,
+    });
+
+    // 3. Generate the commitments
+    const blobData = await fs.readFile("file.txt");
+    // Create provider explicitly for use with generateCommitments
+    const provider = await ClayErasureCodingProvider.create();
+    const blobCommitments = await generateCommitments(provider, blobData);
+
+    // 4. Write the commitments to the coordination layer
+    const { transaction: pendingWriteBlobCommitmentsTransaction } =
+      await shelbyClient.coordination.registerBlob({
+        account: signer,
+        blobName: "path/to/file.txt",
+        blobMerkleRoot: blobCommitments.blob_merkle_root,
+        size: blobData.length,
+        expirationMicros: (1000 * 60 * 60 * 24 * 30 + Date.now()) * 1000, // 30 days
+      });
+
+    await aptosClient.waitForTransaction({
+      transactionHash: pendingWriteBlobCommitmentsTransaction.hash,
+    });
+
+    // 5. Confirm the commitments through the RPC layer
+    await shelbyClient.rpc.putBlob({
+        account: signer.accountAddress,
+        blobName: "path/to/file.txt",
+        blobData,
+    });
+    ```
+  </Step>
+</Steps>
+
+## Conclusion
+
+And that is it! You have now manually uploaded a file to the Shelby network. For more information about the SDK, feel free to refer to the [Specifications](/sdks/typescript/node/specifications) page.
+
+<Cards>
+  <Card title="Specifications" href="/sdks/typescript/node/specifications">
+    Reference documentation for the API and specifications
+  </Card>
+</Cards>
+
+<br />
+
+
+# Uploading a File (/sdks/typescript/node/guides/uploading-file)
+
+import { Step, Steps } from "fumadocs-ui/components/steps";
+import ShelbyUSDFaucet from "@/components/faucet/ShelbyUSDFaucet";
+
+# Overview
+
+In this guide, we will walk you through the process of obtaining ShelbyUSD tokens and uploading a file to the Shelby network.
+
+<Callout type="info">
+  This guide assumes you already have a Node.js environment setup and will be
+  using the Shelbynet network.
+</Callout>
+
+## Getting Started
+
+<Steps>
+  <Step>
+    ### Installation
+
+    To get started, you will need to install the following dependencies in your Node.js environment.
+
+    <CodeBlockTabs defaultValue="npm">
+      <CodeBlockTabsList>
+        <CodeBlockTabsTrigger value="npm">
+          npm
+        </CodeBlockTabsTrigger>
+
+        <CodeBlockTabsTrigger value="pnpm">
+          pnpm
+        </CodeBlockTabsTrigger>
+
+        <CodeBlockTabsTrigger value="yarn">
+          yarn
+        </CodeBlockTabsTrigger>
+
+        <CodeBlockTabsTrigger value="bun">
+          bun
+        </CodeBlockTabsTrigger>
+      </CodeBlockTabsList>
+
+      <CodeBlockTab value="npm">
+        ```bash
+        npm install @shelby-protocol/sdk @aptos-labs/ts-sdk fs-extra glob node-fetch yaml
+        ```
+      </CodeBlockTab>
+
+      <CodeBlockTab value="pnpm">
+        ```bash
+        pnpm add @shelby-protocol/sdk @aptos-labs/ts-sdk fs-extra glob node-fetch yaml
+        ```
+      </CodeBlockTab>
+
+      <CodeBlockTab value="yarn">
+        ```bash
+        yarn add @shelby-protocol/sdk @aptos-labs/ts-sdk fs-extra glob node-fetch yaml
+        ```
+      </CodeBlockTab>
+
+      <CodeBlockTab value="bun">
+        ```bash
+        bun add @shelby-protocol/sdk @aptos-labs/ts-sdk fs-extra glob node-fetch yaml
+        ```
+      </CodeBlockTab>
+    </CodeBlockTabs>
+  </Step>
+
+  <Step>
+    ### Setting up an account
+
+    Use the `@aptos-labs/ts-sdk` package to generate a new or existing account
+
+    ```typescript title="uploadScript.ts"
+    import { Account, Ed25519Account, Ed25519PrivateKey } from "@aptos-labs/ts-sdk";
+
+    // Generate a new Ed25519 Account
+    const account = Account.generate();
+
+    // Use an existing Ed25519 Account private key
+    const account = new Ed25519Account({
+      privateKey: new Ed25519PrivateKey("ed25519-priv-..."),
+    });
+    ```
+  </Step>
+
+  <Step>
+    ### Acquire an API Key
+
+    To avoid getting rate limited when making calls to the Shelby network, make sure you [acquired an API Key](/sdks/typescript/acquire-api-keys)
+  </Step>
+
+  <Step>
+    ### Funding your account
+
+    To upload a file, you will need to have an account with two assets:
+
+    * **APT tokens**: Used to pay for gas fees when sending transactions
+    * **ShelbyUSD tokens**: Used to pay for the upload the file to the Shelby network
+
+    To fund your account with APT tokens, you can use the `fundAccount()` function the Aptos SDK provides.
+
+    ```ts
+    import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
+
+    const aptosClient = new Aptos(
+      new AptosConfig({
+        network: Network.SHELBYNET,
+        clientConfig: {
+          API_KEY: "aptoslabs_***",
+        },
+      })
+    );
+
+    await aptosClient.fundAccount({
+      accountAddress: account.accountAddress,
+      amount: 100000000,
+    });
+    ```
+
+    To fund your account with ShelbyUSD tokens, you can provide your account address to the **Shelby Faucet** found below.
+
+    <ShelbyUSDFaucet />
+  </Step>
+
+  <Step>
+    ### Setting up Shelby client
+
+    Now that you have set up an account with funds, you can start setting up your shelby client to interact with the Shelby network.
+
+    ```typescript title="uploadScript.ts"
+    import { Network } from "@aptos-labs/ts-sdk";
+    import { ShelbyNodeClient } from "@shelby-protocol/sdk/node";
+
+    const shelbyClient = new ShelbyNodeClient({
+      network: Network.SHELBYNET,
+      apiKey: "aptoslabs_***",
+    });
+    ```
+  </Step>
+
+  <Step>
+    ### Uploading a file
+
+    Lastly, to upload a file you can use the `upload` function from the `ShelbyNodeClient` class to upload a file to the Shelby network.
+
+    ```typescript title="uploadScript.ts"
+    import fs from "fs/promises";
+
+    // 1. Get the file data
+    const blobData = await fs.readFile("file.txt");
+
+    // 2. Upload the file
+    await shelbyClient.upload({
+      account,
+      blobData,
+      blobName: "path/to/file.txt",
+      expirationMicros: (1000 * 60 * 60 * 24 * 30 + Date.now()) * 1000, // 30 days
+    });
+    ```
+  </Step>
+
+  <Step>
+    ### Retrieving a file (Optional)
+
+    To retrieve a file, you can use the `getBlob` function of the `ShelbyRPCClient` class to retrieve a file from the Shelby network.
+
+    ```typescript title="getBlobScript.ts"
+    import { ShelbyBlob } from "@shelby-protocol/sdk/node";
+    import fs from "fs";
+
+    // 1. Get the file
+    const blob: ShelbyBlob = await shelbyClient.download({
+      account: account.accountAddress,
+      blobName: "path/to/file.txt",
+    });
+
+    // 2. Save the file
+    blob.stream.pipe(fs.createWriteStream("file.txt"));
+    ```
+
+    Alternatively, you can directly download the file using a `GET` request to the Shelby RPC endpoint.
+
+    ```bash
+    curl -X GET "https://api.shelbynet.shelby.xyz/shelby/v1/blobs/{account_address}/{blob_name}" > file.txt
+    ```
+
+    <Callout type="warning">
+      The API documentation is still under development and will be provided at a
+      later date.
+    </Callout>
+
+    **Basic Example**
+
+    | Blob Name  | Account Address                              |
+    | ---------- | -------------------------------------------- |
+    | `file.txt` | `0x1234567890123456789012345678901234567890` |
+
+    ```bash
+    curl -X GET "https://api.shelbynet.shelby.xyz/shelby/v1/blobs/0x1234567890123456789012345678901234567890/file.txt" > file.txt
+    ```
+
+    **Relative Paths Example**
+
+    | Blob Name          | Account Address                              |
+    | ------------------ | -------------------------------------------- |
+    | `path/to/file.txt` | `0x1234567890123456789012345678901234567890` |
+
+    ```bash
+    curl -X GET "https://api.shelbynet.shelby.xyz/shelby/v1/blobs/0x1234567890123456789012345678901234567890/path/to/file.txt" > file.txt
+    ```
+  </Step>
+</Steps>
+
+## Conclusion
+
+And that is it! You have now uploaded a file to the Shelby network. For more information about the SDK, feel free to refer to the [Specifications](/sdks/typescript/node/specifications) page.
+
+<Cards>
+  <Card title="Specifications" href="/sdks/typescript/node/specifications">
+    Reference documentation for the API and specifications
+  </Card>
+</Cards>
+
+
+# Unknown (/apis/rpc/localhost/unknown/swagger/get)
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+Load the swagger UI.
+
+<APIPage document={"../server/openapi/openapi-localhost.json"} operations={[{"path":"/swagger","method":"get"}]} webhooks={[]} hasHead={false} />
+
+
+# Unknown (/apis/rpc/shelbynet/unknown/swagger/get)
+
+{/* This file was generated by Fumadocs. Do not edit this file directly. Any changes should be made by running the generation command again. */}
+
+Load the swagger UI.
+
+<APIPage document={"../server/openapi/openapi-shelbynet.json"} operations={[{"path":"/swagger","method":"get"}]} webhooks={[]} hasHead={false} />
