@@ -1,0 +1,318 @@
+/**
+ * Pack Manager - Orchestrates pack creation and file uploads
+ */
+
+import {
+  StorageProvider,
+  DatabaseClient,
+  EmbeddingProvider,
+  UploadRequest,
+  UploadResponse,
+  UploadedFile,
+  PackManifest,
+  uuid,
+  sha256,
+  ValidationError,
+  AppError,
+} from '@shelby-rag/shared';
+import { textProcessor } from '@shelby-rag/text-processing';
+
+export interface PackManagerConfig {
+  storage: StorageProvider;
+  database: DatabaseClient;
+  embeddings: EmbeddingProvider;
+  maxFileBytes?: number;
+  maxFilesPerPack?: number;
+  allowedMimeTypes?: string[];
+}
+
+export class PackManager {
+  private storage: StorageProvider;
+  private database: DatabaseClient;
+  private embeddings: EmbeddingProvider;
+  private maxFileBytes: number;
+  private maxFilesPerPack: number;
+  private allowedMimeTypes: string[];
+
+  constructor(config: PackManagerConfig) {
+    this.storage = config.storage;
+    this.database = config.database;
+    this.embeddings = config.embeddings;
+    this.maxFileBytes = config.maxFileBytes || 26214400; // 25MB default
+    this.maxFilesPerPack = config.maxFilesPerPack || 1000;
+    this.allowedMimeTypes = config.allowedMimeTypes || [
+      'application/pdf',
+      'text/plain',
+      'text/markdown',
+      'text/html',
+      'text/csv',
+      'application/json',
+      'image/png',
+      'image/jpeg',
+      'image/jpg',
+      'image/webp',
+    ];
+  }
+
+  /**
+   * Create a new source pack with files
+   */
+  async createPack(
+    userId: string,
+    request: UploadRequest
+  ): Promise<UploadResponse> {
+    // Validation
+    this.validateRequest(request);
+
+    const packId = uuid();
+    const uploadedFiles: UploadedFile[] = [];
+
+    try {
+      // 1. Create pack record
+      await this.database.createPack({
+        pack_id: packId,
+        owner_user_id: userId,
+        title: request.title,
+        summary: request.summary,
+        tags: request.tags || [],
+        visibility: 'private',
+      });
+
+      console.log(`📦 Created pack: ${packId}`);
+
+      // 2. Process each file
+      for (const file of request.files) {
+        try {
+          const result = await this.processFile(packId, file, request.ocr || false);
+          uploadedFiles.push(result);
+        } catch (error: any) {
+          console.error(`Failed to process file ${file.path}:`, error);
+          uploadedFiles.push({
+            path: file.path,
+            mime: file.mime,
+            bytes: file.buffer.length,
+            sha256: '',
+            shelby_blob_id: '',
+            indexed: false,
+            chunks: 0,
+            error: error.message,
+          });
+        }
+      }
+
+      // 3. Create and upload manifest
+      const manifest: PackManifest = {
+        pack_id: packId,
+        title: request.title,
+        summary: request.summary,
+        tags: request.tags || [],
+        created_at: new Date().toISOString(),
+        files: uploadedFiles,
+      };
+
+      try {
+        const manifestBuffer = Buffer.from(JSON.stringify(manifest, null, 2));
+        const manifestUpload = await this.storage.upload(manifestBuffer, {
+          contentType: 'application/json',
+          metadata: { path: `${packId}/manifest.json` },
+        });
+
+        await this.database.updatePackManifest(packId, manifestUpload.blob_id);
+        console.log(`📄 Manifest uploaded: ${manifestUpload.blob_id}`);
+      } catch (error: any) {
+        console.error('Failed to upload manifest:', error);
+        // Non-fatal, continue
+      }
+
+      console.log(`✅ Pack created successfully: ${packId}`);
+
+      return {
+        pack_id: packId,
+        files: uploadedFiles,
+      };
+    } catch (error: any) {
+      // Cleanup on error (optional - could also leave partial data)
+      console.error(`Failed to create pack:`, error);
+      throw new AppError(
+        `Pack creation failed: ${error.message}`,
+        'PACK_CREATION_ERROR',
+        500,
+        { originalError: error }
+      );
+    }
+  }
+
+  /**
+   * Process a single file: upload, extract text, chunk, embed
+   */
+  private async processFile(
+    packId: string,
+    file: { path: string; mime: string; buffer: Buffer },
+    ocr: boolean
+  ): Promise<UploadedFile> {
+    console.log(`  📄 Processing: ${file.path}`);
+
+    // 1. Compute hash
+    const fileHash = sha256(file.buffer);
+
+    // 2. Upload to Shelby
+    const uploadResult = await this.storage.upload(file.buffer, {
+      contentType: file.mime,
+      metadata: { path: file.path },
+    });
+
+    console.log(`    ☁️  Uploaded: ${uploadResult.blob_id}`);
+
+    // 3. Create document record
+    const docId = uuid();
+    await this.database.createDoc({
+      doc_id: docId,
+      pack_id: packId,
+      path: file.path,
+      mime: file.mime,
+      bytes: file.buffer.length,
+      sha256: fileHash,
+      shelby_blob_id: uploadResult.blob_id,
+    });
+
+    // 4. Extract text if supported
+    let indexed = false;
+    let chunkCount = 0;
+
+    if (textProcessor.isSupported(file.mime)) {
+      try {
+        const extracted = await textProcessor.extractText(
+          file.buffer,
+          file.mime,
+          { filename: file.path, ocr }
+        );
+
+        if (extracted.text && extracted.text.trim().length > 0) {
+          // 5. Chunk text
+          const chunks = textProcessor.chunkText(extracted.text, {
+            maxTokens: 1000,
+            overlap: 200,
+            minChunkLength: 50,
+          });
+
+          console.log(`    ✂️  Created ${chunks.length} chunks`);
+
+          // 6. Generate embeddings and store chunks
+          for (const chunkText of chunks) {
+            try {
+              const embedding = await this.embeddings.embed(chunkText);
+
+              await this.database.createChunk({
+                chunk_id: uuid(),
+                pack_id: packId,
+                doc_id: docId,
+                text: chunkText,
+                start_byte: null,
+                end_byte: null,
+                embedding,
+              });
+
+              chunkCount++;
+            } catch (error: any) {
+              console.error(`    Failed to embed chunk:`, error.message);
+              // Continue with other chunks
+            }
+          }
+
+          indexed = true;
+          console.log(`    ✅ Indexed ${chunkCount} chunks`);
+        }
+      } catch (error: any) {
+        console.error(`    Text extraction failed:`, error.message);
+        // Non-fatal, file is still uploaded
+      }
+    } else {
+      console.log(`    ⏭️  Skipped indexing (unsupported type)`);
+    }
+
+    return {
+      path: file.path,
+      mime: file.mime,
+      bytes: file.buffer.length,
+      sha256: fileHash,
+      shelby_blob_id: uploadResult.blob_id,
+      indexed,
+      chunks: chunkCount,
+    };
+  }
+
+  /**
+   * Validate upload request
+   */
+  private validateRequest(request: UploadRequest) {
+    if (!request.title || request.title.trim().length === 0) {
+      throw new ValidationError('Title is required');
+    }
+
+    if (request.title.length > 200) {
+      throw new ValidationError('Title must be 200 characters or less');
+    }
+
+    if (!request.files || request.files.length === 0) {
+      throw new ValidationError('At least one file is required');
+    }
+
+    if (request.files.length > this.maxFilesPerPack) {
+      throw new ValidationError(
+        `Too many files (max: ${this.maxFilesPerPack})`
+      );
+    }
+
+    // Validate each file
+    for (const file of request.files) {
+      if (file.buffer.length > this.maxFileBytes) {
+        throw new ValidationError(
+          `File ${file.path} exceeds size limit (${this.maxFileBytes} bytes)`
+        );
+      }
+
+      if (!this.allowedMimeTypes.includes(file.mime)) {
+        throw new ValidationError(
+          `File type not allowed: ${file.mime}`
+        );
+      }
+    }
+  }
+
+  /**
+   * Get pack with details
+   */
+  async getPack(packId: string) {
+    const pack = await this.database.getPack(packId);
+    if (!pack) return null;
+
+    const docs = await this.database.listDocs(packId);
+
+    return {
+      pack,
+      docs,
+    };
+  }
+
+  /**
+   * Update pack visibility
+   */
+  async updateVisibility(
+    packId: string,
+    userId: string,
+    visibility: 'private' | 'public' | 'unlisted'
+  ) {
+    // Verify ownership
+    const pack = await this.database.getPack(packId);
+    if (!pack) {
+      throw new AppError('Pack not found', 'NOT_FOUND', 404);
+    }
+
+    if (pack.owner_user_id !== userId) {
+      throw new AppError('Not authorized', 'FORBIDDEN', 403);
+    }
+
+    await this.database.updatePackVisibility(packId, visibility);
+  }
+}
+
