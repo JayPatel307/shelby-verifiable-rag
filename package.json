@@ -1,0 +1,35 @@
+{
+  "name": "shelby-verifiable-rag",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Verifiable RAG system with cryptographic citations on Shelby decentralized storage",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"pnpm dev:api\" \"pnpm dev:web\"",
+    "dev:api": "pnpm --filter api dev",
+    "dev:web": "pnpm --filter web dev",
+    "cli": "pnpm --filter cli start",
+    "build": "pnpm -r build",
+    "build:api": "pnpm --filter api build",
+    "build:web": "pnpm --filter web build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "clean": "pnpm -r clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "concurrently": "^9.0.0",
+    "prettier": "^3.2.4",
+    "tsx": "^4.7.0",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0"
+}
+
