@@ -5,6 +5,7 @@
 import Database from 'better-sqlite3';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import {
   DatabaseClient,
   SourcePack,
@@ -18,6 +19,10 @@ import {
   uuid,
   safeJsonParse,
 } from '@shelby-rag/shared';
+
+// ESM equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export class SQLiteDatabase implements DatabaseClient {
   private db: Database.Database;

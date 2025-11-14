@@ -4,6 +4,11 @@
 
 import dotenv from 'dotenv';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+// ESM equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Load .env file
 dotenv.config({ path: path.join(__dirname, '../../.env') });
@@ -16,9 +21,8 @@ export const config = {
   },
   
   shelby: {
-    network: process.env.SHELBY_NETWORK || 'SHELBYNET',
-    apiKey: process.env.SHELBY_API_KEY,
-    privateKey: process.env.APTOS_PRIVATE_KEY,
+    apiKey: process.env.SHELBY_API_KEY, // Optional - only for rate limiting
+    privateKey: process.env.APTOS_PRIVATE_KEY, // Optional - generates new account if not provided
     expirationDays: parseInt(process.env.SHELBY_EXPIRATION_DAYS || '30', 10),
   },
   
@@ -56,14 +60,16 @@ export const config = {
 
 // Validate required config
 if (!config.llm.apiKey && config.embeddings.provider === 'openai') {
-  console.warn('⚠️  OPENAI_API_KEY not set. Some features will not work.');
+  console.warn('⚠️  OPENAI_API_KEY not set. Queries will not work.');
 }
 
+// Shelby configuration notes
 if (!config.shelby.apiKey) {
-  console.warn('⚠️  SHELBY_API_KEY not set. Using without API key (may be rate limited).');
+  console.log('ℹ️  SHELBY_API_KEY not set (optional - only needed to avoid rate limits)');
 }
 
 if (!config.shelby.privateKey) {
-  console.warn('⚠️  APTOS_PRIVATE_KEY not set. A new account will be generated.');
+  console.log('ℹ️  APTOS_PRIVATE_KEY not set. A new account will be generated.');
+  console.log('ℹ️  Note: You\'ll need to fund this account with APT and ShelbyUSD tokens for uploads.');
 }
 

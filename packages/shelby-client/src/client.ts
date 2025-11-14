@@ -6,7 +6,7 @@
  */
 
 import { ShelbyNodeClient } from '@shelby-protocol/sdk/node';
-import { Network, Account, Ed25519Account, Ed25519PrivateKey } from '@aptos-labs/ts-sdk';
+import { Account, Ed25519Account, Ed25519PrivateKey } from '@aptos-labs/ts-sdk';
 import {
   StorageProvider,
   StorageUploadResult,
@@ -16,11 +16,9 @@ import {
 } from '@shelby-rag/shared';
 
 export interface ShelbyClientConfig {
-  network: Network | string;
-  apiKey?: string;
-  privateKey?: string;           // Aptos private key for signing transactions
-  accountAddress?: string;       // Pre-existing account address
-  expirationDays?: number;       // Default expiration for uploaded files (default: 30)
+  apiKey?: string;                // Optional: For rate limiting only
+  privateKey?: string;            // Aptos private key (if not provided, generates new)
+  expirationDays?: number;        // Default: 30 days
 }
 
 export class ShelbyClient implements StorageProvider {
@@ -28,13 +26,11 @@ export class ShelbyClient implements StorageProvider {
   private account: Account;
   private expirationDays: number;
 
-  constructor(config: ShelbyClientConfig) {
-    // Initialize Shelby client
+  constructor(config: ShelbyClientConfig = {}) {
+    // Minimal SDK initialization - exactly as per Shelby docs
+    // No network needed for shelbynet - it's the default!
     this.client = new ShelbyNodeClient({
-      network: typeof config.network === 'string' 
-        ? (Network as any)[config.network.toUpperCase()] 
-        : config.network,
-      apiKey: config.apiKey,
+      apiKey: config.apiKey, // Optional - only for rate limiting
     });
 
     // Initialize or generate Aptos account

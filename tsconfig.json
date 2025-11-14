@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "lib": ["ES2022"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "paths": {
+      "@shelby-rag/shared": ["./packages/shared/src"],
+      "@shelby-rag/database": ["./packages/database/src"],
+      "@shelby-rag/shelby-client": ["./packages/shelby-client/src"],
+      "@shelby-rag/embeddings": ["./packages/embeddings/src"],
+      "@shelby-rag/text-processing": ["./packages/text-processing/src"],
+      "@shelby-rag/core": ["./packages/core/src"]
+    }
+  }
+}
+
