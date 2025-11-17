@@ -31,128 +31,23 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed architecture documentation
 - **Embeddings**: OpenAI (swappable to local/Cohere)
 - **Text Processing**: pdf-parse, Tesseract.js (OCR)
 
-### Package Structure
 
-```
-├── packages/
-│   ├── shared/              ✅ Shared types & utilities
-│   ├── database/            ✅ SQLite database layer
-│   ├── shelby-client/       ✅ Real Shelby SDK wrapper
-│   ├── embeddings/          ✅ OpenAI + local providers
-│   ├── text-processing/     ✅ PDF, text, OCR extractors
-│   └── core/                🚧 Business logic (in progress)
-│
-├── apps/
-│   ├── api/                 🚧 Express REST API (next)
-│   ├── web/                 📅 Next.js UI (planned)
-│   └── cli/                 📅 CLI tool (planned)
-```
+## 📦 Project Structure
 
-## 📦 Completed Packages
+### Packages (6 Core Modules)
+- **`shared/`** - Types, interfaces, utilities
+- **`database/`** - SQLite with vector search
+- **`shelby-client/`** - Real Shelby SDK integration
+- **`text-processing/`** - PDF, text, OCR extraction
+- **`embeddings/`** - OpenAI + local providers
+- **`core/`** - Business logic (PackManager, QueryEngine, Verifier)
 
-### ✅ `@shelby-rag/shared`
-Common types, interfaces, and utilities used across all packages.
+### Applications (3 Apps)
+- **`api/`** - Express REST API server
+- **`web/`** - Next.js 15 web UI
+- **`cli/`** - Command-line tool
 
-**Key Features:**
-- Complete TypeScript type definitions
-- Storage, embedding, and text extraction interfaces
-- Utility functions (hashing, validation, cosine similarity)
-- Custom error classes
-
-### ✅ `@shelby-rag/database`
-SQLite database implementation with full schema and operations.
-
-**Key Features:**
-- Complete SQL schema with indexes
-- Pack, document, and chunk management
-- User management with dev auth
-- Vector similarity search (cosine distance)
-- Easy to swap for PostgreSQL/MongoDB
-
-### ✅ `@shelby-rag/shelby-client`
-**Real Shelby SDK integration** - not a stub! This uses the official `@shelby-protocol/sdk`.
-
-**Key Features:**
-- Upload files to Shelby with proper expiration
-- Download files with verification
-- Blob metadata queries
-- Account management
-- Cryptographic verification support
-
-**Example:**
-```typescript
-import { ShelbyClient } from '@shelby-rag/shelby-client';
-import { Network } from '@aptos-labs/ts-sdk';
-
-const client = new ShelbyClient({
-  network: Network.SHELBYNET,
-  apiKey: process.env.SHELBY_API_KEY,
-  privateKey: process.env.APTOS_PRIVATE_KEY,
-});
-
-// Upload
-const result = await client.upload(buffer, {
-  contentType: 'application/pdf',
-  metadata: { path: 'documents/myfile.pdf' }
-});
-
-// Download & verify
-const data = await client.download(result.blob_id);
-const verification = await client.verifyBlob(result.blob_id, result.sha256);
-```
-
-### ✅ `@shelby-rag/text-processing`
-Extract text from various file formats and chunk it for embeddings.
-
-**Supported Formats:**
-- PDF (via pdf-parse)
-- Plain text, Markdown, HTML, JSON
-- Images with OCR (Tesseract.js)
-
-**Chunking Strategies:**
-- Word-based with overlap
-- Sentence-based (semantic)
-- Configurable chunk size and overlap
-
-**Example:**
-```typescript
-import { textProcessor } from '@shelby-rag/text-processing';
-
-// Extract text
-const extracted = await textProcessor.extractText(
-  pdfBuffer,
-  'application/pdf',
-  { ocr: true }
-);
-
-// Chunk for embeddings
-const chunks = textProcessor.chunkText(extracted.text, {
-  maxTokens: 1000,
-  overlap: 200
-});
-```
-
-### ✅ `@shelby-rag/embeddings`
-Generate vector embeddings with pluggable providers.
-
-**Providers:**
-- OpenAI (`text-embedding-3-small`) - production ready
-- Local hash-based - for development without API keys
-- Cohere - planned
-
-**Example:**
-```typescript
-import { createEmbeddingsProvider } from '@shelby-rag/embeddings';
-
-const embedder = createEmbeddingsProvider({
-  provider: 'openai',
-  apiKey: process.env.OPENAI_API_KEY,
-  model: 'text-embedding-3-small'
-});
-
-const vector = await embedder.embed('What is Shelby storage?');
-const vectors = await embedder.embedBatch(chunks);
-```
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed system design.
 
 ## ✅ ALL COMPONENTS COMPLETE!
 
@@ -217,71 +112,48 @@ open http://localhost:3000
 2. Create a pack at http://localhost:3000/packs
 3. Ask questions at http://localhost:3000/chat
 
-**See [TESTING.md](./TESTING.md) for detailed testing guide!**
+**See [SETUP.md](./SETUP.md) for detailed setup and testing guide!**
 
 ## 🔧 Development
 
 ```bash
-# Install dependencies
+# Install
 pnpm install
 
-# Run individual apps
-pnpm dev:api      # API server on :4000
-pnpm dev:web      # Web UI on :3000
+# Run both (from root)
+pnpm dev
 
-# Build all packages
-pnpm build
+# Or individually
+pnpm dev:api    # API on :4000
+pnpm dev:web    # Web on :3000
 
-# Run CLI
-pnpm cli upload ./my-docs --title "My Pack"
+# CLI upload
+pnpm cli upload ./docs --title "My Pack"
 ```
 
-## 🌐 Environment Variables
+See **[SETUP.md](./SETUP.md)** for detailed setup and troubleshooting.
 
-See individual `.env.example` files in each app directory.
+## 📖 API Endpoints
 
-**Key Variables:**
-```env
-# Shelby
-SHELBY_BASE_URL=https://api.shelbynet.shelby.xyz
-SHELBY_API_KEY=your_api_key_here
-APTOS_PRIVATE_KEY=your_aptos_private_key
-
-# OpenAI
-OPENAI_API_KEY=your_openai_api_key
-
-# Database
-DATABASE_URL=./data.sqlite
-
-# Embeddings
-EMBEDDINGS_PROVIDER=openai  # or "local" for dev
-```
-
-## 📖 API Endpoints (Planned)
-
-### Authentication
-- `POST /auth/dev-login` - Dev login with email
-
-### Packs
-- `POST /packs` - Upload files and create pack
-- `GET /packs/:id` - Get pack details
-- `PATCH /packs/:id/visibility` - Change visibility
+- `POST /auth/dev-login` - Authentication
+- `POST /packs` - Create pack with files
+- `GET /packs` - List my packs
+- `GET /packs/:id` - Pack details
+- `PATCH /packs/:id/visibility` - Update visibility
+- `DELETE /packs/:id` - Delete pack
+- `DELETE /packs/:packId/docs/:docId` - Delete document
 - `GET /discover` - List public packs
-
-### Query
 - `POST /query` - Query your packs
 - `POST /public_query` - Query public packs
+- `GET /verify/:blob_id` - Verify blob
 
-### Verification
-- `GET /verify/:blob_id` - Verify blob integrity
+## 🎨 UI Pages
 
-## 🎨 UI Pages (Planned)
-
-- `/` - Discover public packs
-- `/packs` - My packs (create, list, manage)
-- `/packs/[id]` - Pack details with file list
-- `/chat` - Ask questions with pack context
-- `/login` - Dev login
+- **/** - Discover public packs (hero + search)
+- **/login** - Authentication
+- **/packs** - My packs with drag-drop uploader
+- **/packs/[id]** - Pack details + file list + delete
+- **/chat** - Q&A with verifiable citations
 
 ## 🔒 Security Features
 
@@ -300,11 +172,12 @@ MIT
 
 This is currently a showcase project for Shelby Protocol. Contributions welcome after initial release!
 
-## 📚 Learn More
+## 📚 Documentation
 
-- [Shelby Protocol Docs](https://docs.shelby.xyz)
-- [Shelby SDK](https://www.npmjs.com/package/@shelby-protocol/sdk)
-- [Aptos Blockchain](https://aptoslabs.com)
+- **[SETUP.md](./SETUP.md)** - Complete setup, testing, and deployment guide
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - System design and architecture
+- **[Shelby Protocol Docs](https://docs.shelby.xyz)** - Official Shelby documentation
+- **[Shelby SDK](https://www.npmjs.com/package/@shelby-protocol/sdk)** - NPM package
 
 ---
 
