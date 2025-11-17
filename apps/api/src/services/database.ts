@@ -1,16 +1,20 @@
 /**
  * Database service initialization
+ * Auto-detects SQLite vs PostgreSQL based on DATABASE_URL
  */
 
-import { SQLiteDatabase } from '@shelby-rag/database';
+import { createDatabase } from '@shelby-rag/database';
 import { config } from '../config';
 
-// Initialize database
-export const db = new SQLiteDatabase(config.database.url);
+// Initialize database (auto-detects SQLite vs PostgreSQL)
+export const db = createDatabase(config.database.url);
 
 console.log(`📊 Database initialized: ${config.database.url}`);
 
-// Log stats
-const stats = db.getStats();
-console.log(` Users: ${stats.users}, Packs: ${stats.packs}, Documents: ${stats.documents}, Chunks: ${stats.chunks}`);
+// Log stats (async for PostgreSQL)
+db.getStats().then(stats => {
+  console.log(` Users: ${stats.users}, Packs: ${stats.packs}, Documents: ${stats.documents}, Chunks: ${stats.chunks}`);
+}).catch(err => {
+  console.warn('Could not load stats:', err.message);
+});
 

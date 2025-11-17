@@ -338,7 +338,7 @@ export class SQLiteDatabase implements DatabaseClient {
   /**
    * Get database stats (for debugging/monitoring)
    */
-  getStats() {
+  async getStats() {
     const packCount = this.db.prepare('SELECT COUNT(*) as count FROM source_packs').get() as any;
     const docCount = this.db.prepare('SELECT COUNT(*) as count FROM docs').get() as any;
     const chunkCount = this.db.prepare('SELECT COUNT(*) as count FROM chunks').get() as any;

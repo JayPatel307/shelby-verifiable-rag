@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "@shelby-rag/shared": "workspace:*",
-    "better-sqlite3": "^11.0.0"
+    "better-sqlite3": "^11.0.0",
+    "pg": "^8.11.3"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.9",
