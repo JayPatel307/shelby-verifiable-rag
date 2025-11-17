@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Package } from 'lucide-react'
+import { Plus, Package, X } from 'lucide-react'
 import { Uploader } from '@/components/Uploader'
 import { PackCard } from '@/components/PackCard'
 import { listMyPacks, updateVisibility, type Pack } from '@/lib/api'
