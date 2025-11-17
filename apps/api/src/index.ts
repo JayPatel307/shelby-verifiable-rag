@@ -18,6 +18,7 @@ import {
 } from './routes/packs';
 import { queryPrivate, queryPublic } from './routes/query';
 import { verifyBlob } from './routes/verify';
+import { deletePack, deleteDocument } from './routes/delete';
 
 // Initialize Express app
 const app = express();
@@ -64,6 +65,8 @@ app.post('/packs', requireUser, upload.any(), createPack);
 app.get('/packs/:id', getPack);
 app.get('/packs', requireUser, listMyPacks);
 app.patch('/packs/:id/visibility', requireUser, updateVisibility);
+app.delete('/packs/:id', requireUser, deletePack);
+app.delete('/packs/:packId/docs/:docId', requireUser, deleteDocument);
 
 // Discovery
 app.get('/discover', discoverPacks);

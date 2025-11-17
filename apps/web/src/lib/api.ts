@@ -174,3 +174,32 @@ export async function verifyBlob(blobId: string, expectedSha256?: string) {
   return res.json();
 }
 
+// Delete
+export async function deletePack(packId: string) {
+  const res = await fetch(`${API_URL}/packs/${packId}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || 'Failed to delete pack');
+  }
+
+  return res.json();
+}
+
+export async function deleteDocument(packId: string, docId: string) {
+  const res = await fetch(`${API_URL}/packs/${packId}/docs/${docId}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || 'Failed to delete document');
+  }
+
+  return res.json();
+}
+

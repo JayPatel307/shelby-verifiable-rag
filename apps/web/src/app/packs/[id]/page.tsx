@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, FileText, Hash, ExternalLink, Calendar, Tag, Eye, EyeOff, Globe } from 'lucide-react'
+import { ArrowLeft, FileText, Hash, ExternalLink, Calendar, Tag, Eye, EyeOff, Globe, Trash2 } from 'lucide-react'
 import Link from 'next/link'
-import { getPack } from '@/lib/api'
+import { getPack, deleteDocument, deletePack } from '@/lib/api'
 import { formatDistanceToNow } from 'date-fns'
 
 export default function PackDetailPage() {
@@ -29,6 +29,33 @@ export default function PackDetailPage() {
       setError(err.message || 'Failed to load pack')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleDeletePack = async () => {
+    if (!confirm('Are you sure you want to delete this pack? This cannot be undone.')) {
+      return
+    }
+
+    try {
+      await deletePack(packId)
+      router.push('/packs')
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete pack')
+    }
+  }
+
+  const handleDeleteDoc = async (docId: string) => {
+    if (!confirm('Are you sure you want to delete this document?')) {
+      return
+    }
+
+    try {
+      await deleteDocument(packId, docId)
+      // Reload pack
+      await loadPack()
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete document')
     }
   }
 
@@ -110,24 +137,36 @@ export default function PackDetailPage() {
               )}
             </div>
 
-            {/* Visibility Badge */}
-            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border-2 border-gray-200">
-              {pack.pack.visibility === 'public' ? (
-                <>
-                  <Globe className="w-5 h-5 text-green-600" />
-                  <span className="font-medium text-green-700">Public</span>
-                </>
-              ) : pack.pack.visibility === 'unlisted' ? (
-                <>
-                  <Eye className="w-5 h-5 text-yellow-600" />
-                  <span className="font-medium text-yellow-700">Unlisted</span>
-                </>
-              ) : (
-                <>
-                  <EyeOff className="w-5 h-5 text-gray-600" />
-                  <span className="font-medium text-gray-700">Private</span>
-                </>
-              )}
+            <div className="flex items-center gap-3">
+              {/* Visibility Badge */}
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border-2 border-gray-200">
+                {pack.pack.visibility === 'public' ? (
+                  <>
+                    <Globe className="w-5 h-5 text-green-600" />
+                    <span className="font-medium text-green-700">Public</span>
+                  </>
+                ) : pack.pack.visibility === 'unlisted' ? (
+                  <>
+                    <Eye className="w-5 h-5 text-yellow-600" />
+                    <span className="font-medium text-yellow-700">Unlisted</span>
+                  </>
+                ) : (
+                  <>
+                    <EyeOff className="w-5 h-5 text-gray-600" />
+                    <span className="font-medium text-gray-700">Private</span>
+                  </>
+                )}
+              </div>
+
+              {/* Delete Pack Button */}
+              <button
+                onClick={handleDeletePack}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50 text-red-700 border-2 border-red-200 hover:bg-red-100 transition-colors"
+                title="Delete pack"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span className="text-sm font-medium">Delete Pack</span>
+              </button>
             </div>
           </div>
 
@@ -213,16 +252,29 @@ export default function PackDetailPage() {
                       </div>
                     </div>
 
-                    {/* View on Shelby button */}
-                    <a
-                      href={`https://explorer.shelby.xyz/shelbynet/blob/${doc.shelby_blob_id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-shrink-0 p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-                      title="View on Shelby Explorer"
-                    >
-                      <ExternalLink className="w-5 h-5" />
-                    </a>
+                    {/* Actions */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <a
+                        href={`https://explorer.shelby.xyz/shelbynet/blob/${doc.shelby_blob_id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                        title="View on Shelby Explorer"
+                      >
+                        <ExternalLink className="w-5 h-5" />
+                      </a>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleDeleteDoc(doc.doc_id)
+                        }}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Delete document"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

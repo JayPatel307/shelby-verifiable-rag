@@ -8,6 +8,7 @@ import { createEmbeddingsProvider } from '@shelby-rag/embeddings';
 import { PackManager, QueryEngine, Verifier } from '@shelby-rag/core';
 import { config } from '../config';
 import { db } from './database';
+import crypto from 'crypto';
 
 // Initialize Shelby client (or use mock for testing)
 console.log('☁️  Initializing storage client...');
@@ -29,7 +30,7 @@ try {
   shelbyClient = {
     upload: async (data: Buffer, opts: any) => ({
       blob_id: `mock:${Date.now()}`,
-      sha256: require('crypto').createHash('sha256').update(data).digest('hex'),
+      sha256: crypto.createHash('sha256').update(data).digest('hex'),
       bytes: data.length,
     }),
     download: async (blobId: string) => Buffer.from('mock data'),
