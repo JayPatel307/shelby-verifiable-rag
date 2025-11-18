@@ -2,7 +2,25 @@
  * API Client for Shelby Verifiable RAG
  */
 
+import { getSession } from 'next-auth/react';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+
+/**
+ * Get headers with auth
+ */
+async function getHeaders(): Promise<HeadersInit> {
+  const session = await getSession();
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+  
+  if (session?.user?.id) {
+    headers['x-user-id'] = session.user.id;
+  }
+  
+  return headers;
+}
 
 // Types matching our API
 export interface Pack {
@@ -48,9 +66,17 @@ export async function devLogin(email: string) {
 
 // Packs
 export async function createPack(formData: FormData) {
+  const session = await getSession();
+  const headers: HeadersInit = {};
+  
+  if (session?.user?.id) {
+    headers['x-user-id'] = session.user.id;
+  }
+  
   const res = await fetch(`${API_URL}/packs`, {
     method: 'POST',
     credentials: 'include',
+    headers,
     body: formData,
   });
 
@@ -63,8 +89,10 @@ export async function createPack(formData: FormData) {
 }
 
 export async function listMyPacks(): Promise<{ items: Pack[] }> {
+  const headers = await getHeaders();
   const res = await fetch(`${API_URL}/packs`, {
     credentials: 'include',
+    headers,
   });
 
   if (!res.ok) {
@@ -89,9 +117,10 @@ export async function getPack(packId: string) {
 }
 
 export async function updateVisibility(packId: string, visibility: 'private' | 'public' | 'unlisted') {
+  const headers = await getHeaders();
   const res = await fetch(`${API_URL}/packs/${packId}/visibility`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify({ visibility }),
   });
@@ -125,9 +154,10 @@ export async function queryPrivate(
   question: string,
   packId?: string
 ): Promise<QueryResponse> {
+  const headers = await getHeaders();
   const res = await fetch(`${API_URL}/query`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify({ question, pack_id: packId }),
   });
@@ -176,8 +206,10 @@ export async function verifyBlob(blobId: string, expectedSha256?: string) {
 
 // Delete
 export async function deletePack(packId: string) {
+  const headers = await getHeaders();
   const res = await fetch(`${API_URL}/packs/${packId}`, {
     method: 'DELETE',
+    headers,
     credentials: 'include',
   });
 
@@ -190,8 +222,10 @@ export async function deletePack(packId: string) {
 }
 
 export async function deleteDocument(packId: string, docId: string) {
+  const headers = await getHeaders();
   const res = await fetch(`${API_URL}/packs/${packId}/docs/${docId}`, {
     method: 'DELETE',
+    headers,
     credentials: 'include',
   });
 

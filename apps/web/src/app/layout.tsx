@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { Navigation } from '@/components/Navigation'
+import { Providers } from '@/components/Providers'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,17 +19,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30">
-          {/* Animated background gradient */}
-          <div className="fixed inset-0 bg-gradient-mesh opacity-30 pointer-events-none" />
-          
-          {/* Navigation */}
-          <Navigation />
-          
-          {/* Main content */}
-          <main className="relative">
-            {children}
-          </main>
+        <Providers>
+          <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30">
+            {/* Animated background gradient */}
+            <div className="fixed inset-0 bg-gradient-mesh opacity-30 pointer-events-none" />
+            
+            {/* Navigation */}
+            <Navigation />
+            
+            {/* Main content */}
+            <main className="relative">
+              {children}
+            </main>
           
           {/* Footer */}
           <footer className="relative border-t border-gray-200 bg-white/50 backdrop-blur-sm mt-20">
@@ -61,6 +63,7 @@ export default function RootLayout({
             </div>
           </footer>
         </div>
+        </Providers>
       </body>
     </html>
   )

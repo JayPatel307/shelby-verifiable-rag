@@ -8,7 +8,7 @@ import cookieParser from 'cookie-parser';
 import multer from 'multer';
 import rateLimit from 'express-rate-limit';
 import { config } from './config';
-import { requireUser, devLogin } from './middleware/auth';
+import { requireUser, devLogin, oauthLogin } from './middleware/auth';
 import {
   createPack,
   getPack,
@@ -59,6 +59,7 @@ app.get('/health', (req, res) => {
 
 // Auth
 app.post('/auth/dev-login', devLogin);
+app.post('/auth/oauth-login', oauthLogin); // For NextAuth
 
 // Packs
 app.post('/packs', requireUser, upload.any(), createPack);

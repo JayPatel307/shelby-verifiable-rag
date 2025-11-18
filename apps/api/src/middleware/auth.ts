@@ -55,7 +55,7 @@ export async function requireUser(
 }
 
 /**
- * Dev login endpoint
+ * Dev login endpoint (legacy - for CLI)
  */
 export async function devLogin(req: Request, res: Response) {
   try {
@@ -95,6 +95,37 @@ export async function devLogin(req: Request, res: Response) {
   } catch (error: any) {
     console.error('Login failed:', error);
     res.status(500).json({ error: 'Login failed' });
+  }
+}
+
+/**
+ * OAuth login endpoint (for NextAuth)
+ */
+export async function oauthLogin(req: Request, res: Response) {
+  try {
+    const { email, name, provider, provider_id } = req.body;
+
+    if (!email || typeof email !== 'string') {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    // Get or create user
+    let user = await db.getUserByEmail(email);
+    
+    if (!user) {
+      user = await db.createUser(email);
+      console.log(`👤 New OAuth user: ${user.user_id} (${email}) via ${provider}`);
+    } else {
+      console.log(`👤 OAuth login: ${user.user_id} (${email})`);
+    }
+
+    res.json({
+      user_id: user.user_id,
+      email: user.email,
+    });
+  } catch (error: any) {
+    console.error('OAuth login failed:', error);
+    res.status(500).json({ error: 'OAuth login failed' });
   }
 }
 

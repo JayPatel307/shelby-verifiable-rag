@@ -2,10 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Package, MessageCircle, LogIn, Sparkles } from 'lucide-react'
+import { Home, Package, MessageCircle, LogIn, LogOut, User, Sparkles } from 'lucide-react'
+import { useSession, signOut } from 'next-auth/react'
 
 export function Navigation() {
   const pathname = usePathname()
+  const { data: session, status } = useSession()
 
   const links = [
     { href: '/', label: 'Discover', icon: Home },
@@ -57,14 +59,35 @@ export function Navigation() {
               )
             })}
             
-            {/* Login Button */}
-            <Link
-              href="/login"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all ml-2"
-            >
-              <LogIn className="w-4 h-4" />
-              <span className="hidden sm:inline">Login</span>
-            </Link>
+            {/* Auth Button */}
+            {session ? (
+              <div className="flex items-center gap-3 ml-2">
+                {/* User Info */}
+                <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
+                  <User className="w-4 h-4 text-gray-600" />
+                  <span className="text-sm text-gray-700 max-w-[150px] truncate">
+                    {session.user?.email}
+                  </span>
+                </div>
+                
+                {/* Logout Button */}
+                <button
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 transition-all"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="hidden sm:inline">Logout</span>
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all ml-2"
+              >
+                <LogIn className="w-4 h-4" />
+                <span className="hidden sm:inline">Login</span>
+              </Link>
+            )}
           </div>
         </div>
       </div>
