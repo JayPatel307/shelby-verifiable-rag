@@ -132,13 +132,14 @@ echo ""
 echo "👤 Creating service account..."
 gcloud iam service-accounts create shelby-rag-api \
   --display-name="Shelby RAG API Service Account" \
-  || echo "   ⚠️  Service account might already exist"
+  2>/dev/null || echo "   ⚠️  Service account already exists (that's OK)"
 
 # Grant Cloud SQL client role
+echo "🔓 Granting Cloud SQL access to service account..."
 gcloud projects add-iam-policy-binding $GCP_PROJECT_ID \
   --member="serviceAccount:shelby-rag-api@$GCP_PROJECT_ID.iam.gserviceaccount.com" \
   --role="roles/cloudsql.client" \
-  || true
+  2>/dev/null || echo "   ⚠️  Permission might already exist (that's OK)"
 
 echo ""
 echo "======================================"

@@ -7,8 +7,8 @@ import { Providers } from '@/components/Providers'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Shelby Verifiable RAG - Cryptographic Citations',
-  description: 'A provenance-first RAG system built on Shelby decentralized storage. Every answer comes with verifiable citations.',
+  title: 'DataDock - Verifiable AI Citations on Shelby',
+  description: 'Dock your data on Shelby blockchain. Ask questions and get answers with cryptographically verifiable citations. Built on decentralized storage.',
 }
 
 export default function RootLayout({

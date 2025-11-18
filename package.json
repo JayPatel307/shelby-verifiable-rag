@@ -1,8 +1,8 @@
 {
-  "name": "shelby-verifiable-rag",
+  "name": "datadock",
   "version": "0.1.0",
   "private": true,
-  "description": "Verifiable RAG system with cryptographic citations on Shelby decentralized storage",
+  "description": "DataDock - Dock your data on Shelby blockchain. Verifiable RAG with cryptographic citations.",
   "workspaces": [
     "apps/*",
     "packages/*"

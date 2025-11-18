@@ -29,7 +29,7 @@ export function Navigation() {
             </div>
             <div className="flex flex-col">
               <span className="text-lg font-bold gradient-text">
-                Shelby RAG
+                DataDock
               </span>
               <span className="text-xs text-gray-500">Verifiable Citations</span>
             </div>
