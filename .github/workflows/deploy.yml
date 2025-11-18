@@ -1,0 +1,132 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # Allow manual trigger
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: us-central1
+  SERVICE_NAME: shelby-rag-api
+
+jobs:
+  # Deploy API to Cloud Run
+  deploy-api:
+    name: Deploy API to Cloud Run
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      id-token: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+      
+      - name: Build and push Docker image
+        run: |
+          gcloud builds submit \
+            --tag gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }} \
+            --timeout=20m \
+            apps/api
+      
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --image gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }} \
+            --platform managed \
+            --region ${{ env.REGION }} \
+            --allow-unauthenticated \
+            --memory 2Gi \
+            --cpu 2 \
+            --timeout 60s \
+            --max-instances 10 \
+            --min-instances 1 \
+            --set-env-vars "NODE_ENV=production,PORT=8080" \
+            --set-env-vars "DATABASE_URL=${{ secrets.DATABASE_URL }}" \
+            --set-env-vars "EMBEDDINGS_PROVIDER=openai" \
+            --set-env-vars "LLM_PROVIDER=openai" \
+            --set-env-vars "CORS_ORIGIN=${{ secrets.CORS_ORIGIN }}" \
+            --set-secrets "OPENAI_API_KEY=openai-api-key:latest" \
+            --set-secrets "SHELBY_API_KEY=shelby-api-key:latest" \
+            --set-secrets "APTOS_PRIVATE_KEY=aptos-private-key:latest" \
+            --set-secrets "SESSION_SECRET=session-secret:latest" \
+            --add-cloudsql-instances ${{ secrets.CLOUD_SQL_CONNECTION_NAME }}
+      
+      - name: Get service URL
+        id: get-url
+        run: |
+          URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} --region=${{ env.REGION }} --format="value(status.url)")
+          echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "✅ API deployed to: $URL"
+    
+    outputs:
+      api-url: ${{ steps.get-url.outputs.url }}
+
+  # Deploy Web to Vercel
+  deploy-web:
+    name: Deploy Web to Vercel
+    runs-on: ubuntu-latest
+    needs: deploy-api
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Build web app
+        working-directory: apps/web
+        env:
+          NEXT_PUBLIC_API_URL: ${{ needs.deploy-api.outputs.api-url }}
+        run: pnpm build
+      
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: apps/web
+          vercel-args: '--prod'
+
+  # Post-deployment tests
+  test-deployment:
+    name: Test Deployment
+    runs-on: ubuntu-latest
+    needs: [deploy-api, deploy-web]
+    
+    steps:
+      - name: Test API Health
+        run: |
+          echo "🧪 Testing API health..."
+          curl -f ${{ needs.deploy-api.outputs.api-url }}/health
+          echo "✅ API is healthy!"
+      
+      - name: Summary
+        run: |
+          echo "🎉 Deployment successful!"
+          echo "   API: ${{ needs.deploy-api.outputs.api-url }}"
+          echo "   Web: https://your-app.vercel.app"
+

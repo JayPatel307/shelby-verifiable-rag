@@ -24,6 +24,11 @@ yarn-error.log*
 .env.*.local
 *.env
 
+# Deployment config (contains secrets)
+deploy/config.sh
+key.json
+*.pem
+
 # Database
 *.sqlite
 *.sqlite-shm
