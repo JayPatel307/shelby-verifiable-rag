@@ -1,0 +1,37 @@
+# Simplified Dockerfile for monorepo - runs TypeScript with tsx
+FROM node:20-alpine
+
+# Install pnpm
+RUN npm install -g pnpm@8.15.0
+
+WORKDIR /app
+
+# Copy workspace files
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+
+# Copy all packages
+COPY packages ./packages
+
+# Copy API
+COPY apps/api ./apps/api
+
+# Copy tsconfig
+COPY tsconfig.json ./
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Set environment
+ENV NODE_ENV=production
+ENV PORT=8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s CMD node -e "require('http').get('http://localhost:8080/health', (r) => r.statusCode === 200 ? process.exit(0) : process.exit(1))"
+
+# Expose port
+EXPOSE 8080
+
+# Run with tsx (no compilation needed)
+WORKDIR /app/apps/api
+CMD ["pnpm", "exec", "tsx", "src/index.ts"]
+

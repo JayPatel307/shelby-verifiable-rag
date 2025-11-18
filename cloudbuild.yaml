@@ -1,0 +1,16 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/shelby-rag-api'
+      - '-f'
+      - 'apps/api/Dockerfile.simple'
+      - '.'
+    timeout: '1200s'
+
+images:
+  - 'gcr.io/$PROJECT_ID/shelby-rag-api'
+
+timeout: '1200s'
+
