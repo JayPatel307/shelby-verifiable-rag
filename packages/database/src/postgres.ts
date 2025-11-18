@@ -102,7 +102,8 @@ export class PostgreSQLDatabase implements DatabaseClient {
     const row = result.rows[0];
     return {
       ...row,
-      tags: row.tags ? JSON.parse(row.tags) : [],
+      // PostgreSQL JSONB returns already parsed, don't parse again
+      tags: row.tags ? (Array.isArray(row.tags) ? row.tags : JSON.parse(row.tags)) : [],
     };
   }
 
