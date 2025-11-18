@@ -42,11 +42,12 @@ export class PostgreSQLDatabase implements DatabaseClient {
   constructor(config: PostgreSQLConfig | string) {
     // Accept either connection string or config object
     if (typeof config === 'string') {
+      // Check if connecting via Cloud SQL Unix socket
+      const isCloudSQLSocket = config.includes('/cloudsql/');
+      
       this.pool = new Pool({
         connectionString: config,
-        ssl: process.env.NODE_ENV === 'production' 
-          ? { rejectUnauthorized: false }
-          : false,
+        ssl: isCloudSQLSocket ? false : false, // No SSL for Cloud SQL Unix sockets
         max: 20,  // Max connections
         min: 2,   // Min connections
         idleTimeoutMillis: 30000,
@@ -55,9 +56,7 @@ export class PostgreSQLDatabase implements DatabaseClient {
     } else {
       this.pool = new Pool({
         ...config,
-        ssl: config.ssl ?? (process.env.NODE_ENV === 'production' 
-          ? { rejectUnauthorized: false }
-          : false),
+        ssl: config.ssl ?? false, // Default to false for Cloud SQL
         max: config.max ?? 20,
         min: config.min ?? 2,
       });
