@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Send, Loader2, Shield, CheckCircle, XCircle, ExternalLink } from 'lucide-react'
 import { queryPrivate, queryPublic, verifyBlob, listMyPacks, type Citation, type Pack } from '@/lib/api'
 
-export default function ChatPage() {
+function ChatPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const preselectedPack = searchParams.get('pack')
@@ -310,3 +310,16 @@ export default function ChatPage() {
   )
 }
 
+
+
+export default function ChatPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-12 h-12 animate-spin text-primary-600" />
+      </div>
+    }>
+      <ChatPageContent />
+    </Suspense>
+  )
+}
