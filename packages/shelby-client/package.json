@@ -13,12 +13,11 @@
     "test": "echo 'No tests yet'"
   },
   "dependencies": {
-    "@shelby-rag/shared": "workspace:*",
+    "@aptos-labs/ts-sdk": "^5.1.1",
     "@shelby-protocol/sdk": "latest",
-    "@aptos-labs/ts-sdk": "^1.0.0"
+    "@shelby-rag/shared": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.6.3"
   }
 }
-

@@ -6,7 +6,7 @@
  */
 
 import { ShelbyNodeClient } from '@shelby-protocol/sdk/node';
-import { Account, Ed25519Account, Ed25519PrivateKey } from '@aptos-labs/ts-sdk';
+import { Account, Ed25519Account, Ed25519PrivateKey, Network } from '@aptos-labs/ts-sdk';
 import {
   StorageProvider,
   StorageUploadResult,
@@ -27,15 +27,16 @@ export class ShelbyClient implements StorageProvider {
   private expirationDays: number;
 
   constructor(config: ShelbyClientConfig = {}) {
-    // Minimal SDK initialization - exactly as per Shelby docs
-    // No network needed for shelbynet - it's the default!
+    // Initialize Shelby SDK - exact pattern from shelby-quickstart
+    // https://github.com/shelby/shelby-quickstart/blob/main/src/index.ts#L48-L51
     this.client = new ShelbyNodeClient({
-      apiKey: config.apiKey, // Optional - only for rate limiting
+      network: Network.SHELBYNET,
+      apiKey: config.apiKey,
     });
 
-    // Initialize or generate Aptos account
+    // Initialize or generate Aptos account - use Account.fromPrivateKey like quickstart
     if (config.privateKey) {
-      this.account = new Ed25519Account({
+      this.account = Account.fromPrivateKey({
         privateKey: new Ed25519PrivateKey(config.privateKey),
       });
     } else {
@@ -67,17 +68,17 @@ export class ShelbyClient implements StorageProvider {
       const expirationMicros = (Date.now() + this.expirationDays * 24 * 60 * 60 * 1000) * 1000;
 
       // Upload using Shelby SDK
-      const { transaction, blobCommitments } = await this.client.upload({
+      const uploadResult = await this.client.upload({
         signer: this.account,
         blobData: data,
         blobName,
         expirationMicros,
       });
 
-      // Get blob metadata from transaction
+      // Get blob metadata from transaction (format may vary by SDK version)
       const blobId = `${this.account.accountAddress.toString()}/${blobName}`;
 
-      console.log(`✅ Uploaded to Shelby: ${blobId} (tx: ${transaction.hash})`);
+      console.log(`✅ Uploaded to Shelby: ${blobId}${uploadResult?.transaction ? ` (tx: ${uploadResult.transaction.hash})` : ''}`);
 
       return {
         blob_id: blobId,
