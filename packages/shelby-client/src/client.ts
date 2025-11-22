@@ -115,8 +115,14 @@ export class ShelbyClient implements StorageProvider {
         blobName,
       });
 
-      // Convert stream to buffer
-      return await this.streamToBuffer(blob.stream);
+      // Convert readable stream to buffer (SDK uses 'readable' property)
+      // @ts-ignore - SDK types might not be up to date
+      const readable = blob.readable || blob.stream;
+      if (!readable) {
+        throw new Error('No readable stream in download response');
+      }
+      
+      return await this.streamToBuffer(readable);
     } catch (error: any) {
       throw new AppError(
         `Failed to download from Shelby: ${error.message}`,
@@ -237,9 +243,24 @@ export class ShelbyClient implements StorageProvider {
   // ====================================================================
 
   /**
-   * Convert Node.js stream to Buffer
+   * Convert stream to Buffer (handles both Node and Web streams)
    */
-  private async streamToBuffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
+  private async streamToBuffer(stream: any): Promise<Buffer> {
+    // Handle Web ReadableStream (from Shelby SDK)
+    if (stream.getReader) {
+      const reader = stream.getReader();
+      const chunks: Uint8Array[] = [];
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+      }
+      
+      return Buffer.concat(chunks.map(c => Buffer.from(c)));
+    }
+    
+    // Handle Node.js stream (fallback)
     return new Promise((resolve, reject) => {
       const chunks: Buffer[] = [];
       

@@ -273,7 +273,13 @@ function ChatPageContent() {
                           </button>
 
                           <a
-                            href={`https://explorer.shelby.xyz/shelbynet/blob/${citation.shelby_blob_id}`}
+                            href={(() => {
+                              // Parse blob_id format: account/blobname
+                              const parts = citation.shelby_blob_id.split('/')
+                              const account = parts[0]
+                              const blobName = parts.slice(1).join('/')
+                              return `https://explorer.shelby.xyz/shelbynet/account/${account}/blobs?name=${blobName}`
+                            })()}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 font-medium text-sm rounded-lg hover:bg-gray-200 transition-colors"

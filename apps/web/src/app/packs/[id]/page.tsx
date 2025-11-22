@@ -255,7 +255,13 @@ export default function PackDetailPage() {
                     {/* Actions */}
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <a
-                        href={`https://explorer.shelby.xyz/shelbynet/blob/${doc.shelby_blob_id}`}
+                        href={(() => {
+                          // Parse blob_id format: account/blobname
+                          const parts = doc.shelby_blob_id.split('/')
+                          const account = parts[0]
+                          const blobName = parts.slice(1).join('/')
+                          return `https://explorer.shelby.xyz/shelbynet/account/${account}/blobs?name=${blobName}`
+                        })()}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
