@@ -6,6 +6,7 @@ import OpenAI from 'openai';
 import {
   DatabaseClient,
   EmbeddingProvider,
+  StorageProvider,
   QueryRequest,
   QueryResponse,
   Citation,
@@ -17,6 +18,7 @@ import {
 export interface QueryEngineConfig {
   database: DatabaseClient;
   embeddings: EmbeddingProvider;
+  storage: StorageProvider;
   llm: {
     provider: 'openai' | 'anthropic';
     apiKey: string;
@@ -28,6 +30,7 @@ export interface QueryEngineConfig {
 export class QueryEngine {
   private database: DatabaseClient;
   private embeddings: EmbeddingProvider;
+  private storage: StorageProvider;
   private llmClient: OpenAI;
   private llmModel: string;
   private maxResults: number;
@@ -35,6 +38,7 @@ export class QueryEngine {
   constructor(config: QueryEngineConfig) {
     this.database = config.database;
     this.embeddings = config.embeddings;
+    this.storage = config.storage;
     this.maxResults = config.maxResults || 5;
 
     // Initialize LLM client
@@ -160,15 +164,40 @@ export class QueryEngine {
 
     console.log(`📚 Found ${scoredChunks.length} relevant chunks`);
 
-    // 3. Format context for LLM
-    const contexts = scoredChunks.map((chunk, i) => ({
-      index: i + 1,
-      text: chunk.text,
-      blob_id: (chunk as any).shelby_blob_id,
-      sha256: (chunk as any).sha256,
-      doc_path: (chunk as any).doc_path,
-      score: chunk.score,
-    }));
+    // 3. Download chunk texts from Shelby
+    console.log(`⬇️  Downloading ${scoredChunks.length} chunks from Shelby...`);
+    const contexts = await Promise.all(
+      scoredChunks.map(async (chunk, i) => {
+        try {
+          // Download chunk text from Shelby
+          const chunkBuffer = await this.storage.download(chunk.shelby_chunk_blob_id);
+          const chunkText = chunkBuffer.toString('utf-8');
+
+          return {
+            index: i + 1,
+            text: chunkText,
+            chunk_blob_id: chunk.shelby_chunk_blob_id,  // Chunk's blob ID
+            blob_id: (chunk as any).shelby_blob_id,      // Document's blob ID
+            sha256: (chunk as any).sha256,
+            doc_path: (chunk as any).doc_path,
+            score: chunk.score,
+          };
+        } catch (error: any) {
+          console.error(`Failed to download chunk ${chunk.chunk_id}:`, error.message);
+          return {
+            index: i + 1,
+            text: `[Failed to download chunk: ${error.message}]`,
+            chunk_blob_id: chunk.shelby_chunk_blob_id,
+            blob_id: (chunk as any).shelby_blob_id,
+            sha256: (chunk as any).sha256,
+            doc_path: (chunk as any).doc_path,
+            score: chunk.score,
+          };
+        }
+      })
+    );
+
+    console.log(`✅ Downloaded ${contexts.length} chunks from blockchain`);
 
     // 4. Call LLM
     console.log('🤖 Generating answer with LLM...');
@@ -196,7 +225,7 @@ export class QueryEngine {
     question: string,
     contexts: Array<{ index: number; text: string }>
   ): Promise<string> {
-    const systemPrompt = `You are a helpful assistant that answers questions based on provided context.
+    const systemPrompt = `You are a helpful assistant that answers questions based on provided context/dataset.
 
 IMPORTANT RULES:
 1. ONLY use information from the provided context to answer

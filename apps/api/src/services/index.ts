@@ -66,6 +66,7 @@ export const packManager = new PackManager({
 export const queryEngine = new QueryEngine({
   database: db,
   embeddings: embeddingsProvider,
+  storage: shelbyClient,
   llm: config.llm,
 });
 

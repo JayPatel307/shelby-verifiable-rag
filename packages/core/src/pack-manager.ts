@@ -197,16 +197,33 @@ export class PackManager {
 
           console.log(`    ✂️  Created ${chunks.length} chunks`);
 
-          // 6. Generate embeddings and store chunks
-          for (const chunkText of chunks) {
+          // 6. Upload chunks to Shelby, generate embeddings, and store metadata
+          for (let i = 0; i < chunks.length; i++) {
             try {
+              const chunkText = chunks[i];
+              const chunkBuffer = Buffer.from(chunkText, 'utf-8');
+
+              // Upload chunk to Shelby
+              const chunkUpload = await this.storage.upload(chunkBuffer, {
+                contentType: 'text/plain',
+                metadata: {
+                  path: `${packId}/${docId}/chunk_${i}`,
+                  chunk_index: String(i),
+                },
+              });
+
+              console.log(`      ☁️  Chunk ${i + 1}/${chunks.length} → ${chunkUpload.blob_id}`);
+
+              // Generate embedding
               const embedding = await this.embeddings.embed(chunkText);
 
+              // Store chunk metadata (not the text!)
               await this.database.createChunk({
                 chunk_id: uuid(),
                 pack_id: packId,
                 doc_id: docId,
-                text: chunkText,
+                shelby_chunk_blob_id: chunkUpload.blob_id,
+                chunk_index: i,
                 start_byte: null,
                 end_byte: null,
                 embedding,
@@ -214,13 +231,13 @@ export class PackManager {
 
               chunkCount++;
             } catch (error: any) {
-              console.error(`    Failed to embed chunk:`, error.message);
+              console.error(`    Failed to process chunk ${i}:`, error.message);
               // Continue with other chunks
             }
           }
 
           indexed = true;
-          console.log(`    ✅ Indexed ${chunkCount} chunks`);
+          console.log(`    ✅ Uploaded & indexed ${chunkCount} chunks to Shelby`);
         }
       } catch (error: any) {
         console.error(`    Text extraction failed:`, error.message);

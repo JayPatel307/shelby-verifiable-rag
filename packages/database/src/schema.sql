@@ -60,26 +60,29 @@ CREATE INDEX IF NOT EXISTS idx_docs_sha256 ON docs(sha256);
 CREATE INDEX IF NOT EXISTS idx_docs_blob_id ON docs(shelby_blob_id);
 
 -- =================================================================
--- Chunks Table (with embeddings)
+-- Chunks Table (embeddings only - text stored on Shelby)
 -- =================================================================
 CREATE TABLE IF NOT EXISTS chunks (
   chunk_id TEXT PRIMARY KEY,
   pack_id TEXT NOT NULL,
   doc_id TEXT NOT NULL,
-  text TEXT NOT NULL,
-  start_byte INTEGER,             -- Optional byte range
+  shelby_chunk_blob_id TEXT NOT NULL, -- Shelby reference for chunk text
+  chunk_index INTEGER NOT NULL,        -- Index within document (for ordering)
+  start_byte INTEGER,                  -- Optional byte range in original doc
   end_byte INTEGER,
-  embedding TEXT NOT NULL,        -- JSON array of numbers
+  embedding TEXT NOT NULL,             -- JSON array of numbers (search index)
   created_at TEXT DEFAULT (datetime('now')),
   FOREIGN KEY(pack_id) REFERENCES source_packs(pack_id) ON DELETE CASCADE,
   FOREIGN KEY(doc_id) REFERENCES docs(doc_id) ON DELETE CASCADE,
-  CHECK(length(text) > 0),
+  CHECK(length(shelby_chunk_blob_id) > 0),
+  CHECK(chunk_index >= 0),
   CHECK(start_byte IS NULL OR start_byte >= 0),
   CHECK(end_byte IS NULL OR end_byte >= start_byte)
 );
 
 CREATE INDEX IF NOT EXISTS idx_chunks_pack ON chunks(pack_id);
 CREATE INDEX IF NOT EXISTS idx_chunks_doc ON chunks(doc_id);
+CREATE INDEX IF NOT EXISTS idx_chunks_blob ON chunks(shelby_chunk_blob_id);
 
 -- =================================================================
 -- Query Statistics (optional, for analytics)

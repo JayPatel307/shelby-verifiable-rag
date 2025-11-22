@@ -60,14 +60,20 @@ export interface DocRow {
 // ============================================================================
 
 export interface ChunkRow {
-  chunk_id: string;         // UUID
-  pack_id: string;          // Foreign key
-  doc_id: string;           // Foreign key to document
-  text: string;             // Extracted text content
-  start_byte: number | null; // Optional byte offset in original file
-  end_byte: number | null;   // Optional byte offset end
-  embedding: number[];      // Vector embedding (stored as JSON in DB)
-  created_at?: string;      // ISO 8601 timestamp
+  chunk_id: string;              // UUID
+  pack_id: string;               // Foreign key
+  doc_id: string;                // Foreign key to document
+  shelby_chunk_blob_id: string;  // Shelby blob ID for chunk text
+  chunk_index: number;           // Index within document (for ordering)
+  start_byte: number | null;     // Optional byte offset in original file
+  end_byte: number | null;       // Optional byte offset end
+  embedding: number[];           // Vector embedding (stored as JSON in DB)
+  created_at?: string;           // ISO 8601 timestamp
+}
+
+// Extended chunk with downloaded text (used during queries)
+export interface ChunkWithText extends ChunkRow {
+  text: string;                  // Downloaded from Shelby
 }
 
 // ============================================================================

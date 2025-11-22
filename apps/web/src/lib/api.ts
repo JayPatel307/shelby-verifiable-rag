@@ -22,6 +22,16 @@ async function getHeaders(): Promise<HeadersInit> {
   return headers;
 }
 
+/**
+ * Wrapper for fetch that includes credentials (cookies)
+ */
+async function apiFetch(url: string, options: RequestInit = {}): Promise<Response> {
+  return fetch(url, {
+    ...options,
+    credentials: 'include', // Always send cookies for dev-login
+  });
+}
+
 // Types matching our API
 export interface Pack {
   pack_id: string;

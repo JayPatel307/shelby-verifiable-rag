@@ -2,12 +2,17 @@
 
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import { Sparkles, Loader2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Sparkles, Loader2, Terminal } from 'lucide-react'
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
 
 export default function LoginPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const [devEmail, setDevEmail] = useState('dev@example.com')
+  const [devLoading, setDevLoading] = useState(false)
+  const [devError, setDevError] = useState('')
 
   // Redirect if already logged in
   useEffect(() => {
@@ -18,6 +23,37 @@ export default function LoginPage() {
 
   const handleGoogleSignIn = async () => {
     await signIn('google', { callbackUrl: '/packs' })
+  }
+
+  const handleDevLogin = async () => {
+    setDevLoading(true)
+    setDevError('')
+    
+    try {
+      const res = await fetch(`${API_URL}/auth/dev-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email: devEmail }),
+      })
+
+      if (!res.ok) {
+        const error = await res.json()
+        throw new Error(error.error || 'Login failed')
+      }
+
+      const data = await res.json()
+      console.log('✅ Dev login successful:', data)
+      
+      // Redirect to packs
+      router.push('/packs')
+      router.refresh()
+    } catch (error: any) {
+      console.error('Dev login failed:', error)
+      setDevError(error.message || 'Login failed')
+    } finally {
+      setDevLoading(false)
+    }
   }
 
   if (status === 'loading') {
@@ -86,9 +122,47 @@ export default function LoginPage() {
                 <div className="w-full border-t border-gray-200"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white text-gray-500">Secure authentication powered by NextAuth</span>
+                <span className="px-4 bg-white text-gray-500">or use dev login for testing</span>
               </div>
             </div>
+          </div>
+
+          {/* Dev Login (for local development) */}
+          <div className="mt-6 space-y-3">
+            <div className="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <Terminal className="w-5 h-5 text-yellow-600" />
+              <span className="text-sm text-yellow-800 font-medium">Development Mode</span>
+            </div>
+            
+            <input
+              type="email"
+              value={devEmail}
+              onChange={(e) => setDevEmail(e.target.value)}
+              placeholder="Enter email for dev login"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary-500 focus:outline-none"
+              disabled={devLoading}
+            />
+            
+            <button
+              onClick={handleDevLogin}
+              disabled={devLoading}
+              className="w-full px-6 py-3 bg-gray-800 hover:bg-gray-900 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {devLoading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Logging in...
+                </span>
+              ) : (
+                'Dev Login'
+              )}
+            </button>
+            
+            {devError && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-sm text-red-600">{devError}</p>
+              </div>
+            )}
           </div>
 
           {/* Info */}

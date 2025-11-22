@@ -239,14 +239,15 @@ export class PostgreSQLDatabase implements DatabaseClient {
 
   async createChunk(chunk: Omit<ChunkRow, 'created_at'>): Promise<ChunkRow> {
     const result = await this.pool.query(
-      `INSERT INTO chunks (chunk_id, pack_id, doc_id, text, start_byte, end_byte, embedding)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `INSERT INTO chunks (chunk_id, pack_id, doc_id, shelby_chunk_blob_id, chunk_index, start_byte, end_byte, embedding)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING *`,
       [
         chunk.chunk_id,
         chunk.pack_id,
         chunk.doc_id,
-        chunk.text,
+        chunk.shelby_chunk_blob_id,
+        chunk.chunk_index,
         chunk.start_byte,
         chunk.end_byte,
         JSON.stringify(chunk.embedding),
@@ -306,15 +307,16 @@ export class PostgreSQLDatabase implements DatabaseClient {
         chunk_id: row.chunk_id,
         pack_id: row.pack_id,
         doc_id: row.doc_id,
-        text: row.text,
+        shelby_chunk_blob_id: row.shelby_chunk_blob_id,
+        chunk_index: row.chunk_index,
         start_byte: row.start_byte,
         end_byte: row.end_byte,
         embedding,
         created_at: row.created_at,
         score,
-        // Additional fields for convenience
-        shelby_blob_id: row.shelby_blob_id,
-        sha256: row.sha256,
+        // Additional fields for convenience (document metadata)
+        shelby_blob_id: row.shelby_blob_id, // Document blob ID
+        sha256: row.sha256,                  // Document SHA256
         doc_path: row.doc_path,
       } as any;
     });
