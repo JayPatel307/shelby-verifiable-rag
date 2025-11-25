@@ -70,9 +70,24 @@ export async function createPack(req: Request, res: Response) {
       return res.status(400).json({ error: 'No files found' });
     }
 
-    console.log(`\n📤 Creating pack: "${title}" (${files.length} files)`);
+    const totalSize = files.reduce((sum, f) => sum + f.buffer.length, 0);
+    const totalMB = (totalSize / 1024 / 1024).toFixed(2);
+    
+    console.log(`\n📤 Creating pack: "${title}"`);
+    console.log(`   Files: ${files.length}`);
+    console.log(`   Total size: ${totalMB} MB`);
+    console.log(`   OCR: ${ocr ? 'enabled' : 'disabled'}`);
+    
+    // Log individual large files
+    files.forEach(f => {
+      const sizeMB = (f.buffer.length / 1024 / 1024).toFixed(2);
+      if (parseFloat(sizeMB) > 1) {
+        console.log(`   📄 ${f.path}: ${sizeMB} MB`);
+      }
+    });
 
-    // Create pack
+    // Create pack (this may take a while for large PDFs)
+    console.log(`⏳ Starting pack creation (this may take a few minutes for large files)...`);
     const result = await packManager.createPack(userId, {
       title,
       summary,
@@ -81,6 +96,7 @@ export async function createPack(req: Request, res: Response) {
       files,
     });
 
+    console.log(`✅ Pack created successfully: ${result.pack_id}`);
     res.json(result);
   } catch (error: any) {
     console.error('Pack creation error:', error);

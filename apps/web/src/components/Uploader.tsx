@@ -53,6 +53,14 @@ export function Uploader({ onSuccess }: UploaderProps) {
       return
     }
 
+    // Check total file size (max 25MB per file)
+    const maxFileSize = 25 * 1024 * 1024 // 25MB
+    const oversizedFiles = files.filter(f => f.size > maxFileSize)
+    if (oversizedFiles.length > 0) {
+      setError(`File too large: ${oversizedFiles[0].name} (${(oversizedFiles[0].size / 1024 / 1024).toFixed(1)}MB). Max 25MB per file.`)
+      return
+    }
+
     setError('')
     setUploading(true)
     setProgress('Preparing files...')
@@ -68,10 +76,15 @@ export function Uploader({ onSuccess }: UploaderProps) {
         formData.append('files', file)
       })
 
-      setProgress('Uploading to Shelby...')
+      // Show processing message (no fake progress simulation)
+      setProgress('Processing... This may take a few minutes for large documents to create data chunks and vector embeddings.')
+      
       const result = await createPack(formData)
 
-      setProgress('Upload complete!')
+      setProgress('Pack created successfully!')
+      
+      // Wait a moment to show success
+      await new Promise(resolve => setTimeout(resolve, 1000))
       
       // Reset form
       setFiles([])
@@ -84,7 +97,17 @@ export function Uploader({ onSuccess }: UploaderProps) {
         onSuccess(result.pack_id)
       }
     } catch (err: any) {
-      setError(err.message || 'Upload failed')
+      console.error('Upload error:', err)
+      const errorMessage = err.message || 'Upload failed'
+      
+      // Provide helpful error messages
+      if (errorMessage.includes('fetch') || errorMessage.includes('timeout')) {
+        setError('Processing timed out. Large PDFs with many pages may take too long. Try a smaller document or split it into parts.')
+      } else if (errorMessage.includes('too large')) {
+        setError(errorMessage)
+      } else {
+        setError(`Upload failed: ${errorMessage}`)
+      }
     } finally {
       setUploading(false)
       setProgress('')

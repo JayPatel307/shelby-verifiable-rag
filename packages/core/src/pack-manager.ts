@@ -188,52 +188,65 @@ export class PackManager {
         );
 
         if (extracted.text && extracted.text.trim().length > 0) {
-          // 5. Chunk text
+          // 5. Chunk text - larger chunks, no overlap for speed
           const chunks = textProcessor.chunkText(extracted.text, {
-            maxTokens: 1000,
-            overlap: 200,
+            maxTokens: 3000,  // 3x larger chunks
+            overlap: 0,       // No overlap = faster
             minChunkLength: 50,
           });
 
-          console.log(`    ✂️  Created ${chunks.length} chunks`);
+          console.log(`    ✂️  Created ${chunks.length} chunks (optimized for speed)`);
 
           // 6. Upload chunks to Shelby, generate embeddings, and store metadata
-          for (let i = 0; i < chunks.length; i++) {
-            try {
-              const chunkText = chunks[i];
-              const chunkBuffer = Buffer.from(chunkText, 'utf-8');
+          // Process chunks in parallel (batches of 5 to avoid overwhelming APIs)
+          const BATCH_SIZE = 10;
+          
+          for (let batchStart = 0; batchStart < chunks.length; batchStart += BATCH_SIZE) {
+            const batchEnd = Math.min(batchStart + BATCH_SIZE, chunks.length);
+            const batchChunks = chunks.slice(batchStart, batchEnd);
+            
+            // Process this batch in parallel
+            const batchPromises = batchChunks.map(async (chunkText, batchIndex) => {
+              const i = batchStart + batchIndex;
+              try {
+                const chunkBuffer = Buffer.from(chunkText, 'utf-8');
 
-              // Upload chunk to Shelby
-              const chunkUpload = await this.storage.upload(chunkBuffer, {
-                contentType: 'text/plain',
-                metadata: {
-                  path: `${packId}/${docId}/chunk_${i}`,
-                  chunk_index: String(i),
-                },
-              });
+                // Upload chunk to Shelby and generate embedding in parallel
+                const [chunkUpload, embedding] = await Promise.all([
+                  this.storage.upload(chunkBuffer, {
+                    contentType: 'text/plain',
+                    metadata: {
+                      path: `${packId}/${docId}/chunk_${i}`,
+                      chunk_index: String(i),
+                    },
+                  }),
+                  this.embeddings.embed(chunkText),
+                ]);
 
-              console.log(`      ☁️  Chunk ${i + 1}/${chunks.length} → ${chunkUpload.blob_id}`);
+                console.log(`      ☁️  Chunk ${i + 1}/${chunks.length} → ${chunkUpload.blob_id}`);
 
-              // Generate embedding
-              const embedding = await this.embeddings.embed(chunkText);
+                // Store chunk metadata (not the text!)
+                await this.database.createChunk({
+                  chunk_id: uuid(),
+                  pack_id: packId,
+                  doc_id: docId,
+                  shelby_chunk_blob_id: chunkUpload.blob_id,
+                  chunk_index: i,
+                  start_byte: null,
+                  end_byte: null,
+                  embedding,
+                });
 
-              // Store chunk metadata (not the text!)
-              await this.database.createChunk({
-                chunk_id: uuid(),
-                pack_id: packId,
-                doc_id: docId,
-                shelby_chunk_blob_id: chunkUpload.blob_id,
-                chunk_index: i,
-                start_byte: null,
-                end_byte: null,
-                embedding,
-              });
+                return true;
+              } catch (error: any) {
+                console.error(`    Failed to process chunk ${i}:`, error.message);
+                return false;
+              }
+            });
 
-              chunkCount++;
-            } catch (error: any) {
-              console.error(`    Failed to process chunk ${i}:`, error.message);
-              // Continue with other chunks
-            }
+            // Wait for this batch to complete before starting next batch
+            const results = await Promise.all(batchPromises);
+            chunkCount += results.filter(r => r).length;
           }
 
           indexed = true;
