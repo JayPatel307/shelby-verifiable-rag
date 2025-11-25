@@ -7,8 +7,8 @@ import { Providers } from '@/components/Providers'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'DataDock - Verifiable AI Citations on Shelby',
-  description: 'Dock your data on Shelby blockchain. Ask questions and get answers with cryptographically verifiable citations. Built on decentralized storage.',
+  title: 'DataDock - AI-Powered Knowledge, Verified on Shelby',
+  description: 'Transform your documents into AI-searchable knowledge with blockchain-verified sources. Lightning fast, cryptographically secure. Built on Shelby & Aptos.',
 }
 
 export default function RootLayout({
@@ -38,10 +38,10 @@ export default function RootLayout({
               <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent-purple rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">S</span>
+                    <span className="text-white font-bold text-sm">D</span>
                   </div>
                   <span className="text-sm text-gray-600">
-                    Built with ❤️ on <span className="font-semibold text-primary-600">Shelby Protocol</span>
+                    <span className="font-semibold text-gray-900">DataDock</span> - AI meets Blockchain on <span className="font-semibold text-primary-600">Shelby & Aptos</span>
                   </span>
                 </div>
                 

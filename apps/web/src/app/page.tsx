@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Search, Shield, Zap, Package, ArrowRight } from 'lucide-react'
+import { Search, Shield, Zap, Package, ArrowRight, Rocket } from 'lucide-react'
 import { discoverPacks, type Pack } from '@/lib/api'
 import { PackCard } from '@/components/PackCard'
 import Link from 'next/link'
@@ -47,23 +47,27 @@ export default function HomePage() {
         
         <div className="relative max-w-7xl mx-auto text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 backdrop-blur-sm border border-primary-200 text-primary-700 text-sm font-medium mb-8 animate-slide-down">
-            <Shield className="w-4 h-4" />
-            <span>Cryptographically Verifiable Citations</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/40 backdrop-blur-sm border border-pink-300/50 text-primary-700 text-sm font-medium mb-8 animate-slide-down shadow-lg shadow-pink-500/20">
+            <Rocket className="w-4 h-4" />
+            <span>AI-Powered • Blockchain-Verified • Built on Shelby & Aptos</span>
           </div>
 
           {/* Main Heading */}
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 animate-slide-up">
-            <span className="gradient-text">Verifiable RAG</span>
+            <span className="text-4xl sm:text-5xl lg:text-6xl block mb-2 text-gray-800">DataDock</span>
+            <span className="gradient-text">AI-Powered Knowledge</span>
             <br />
-            <span className="text-gray-900">on Shelby Storage</span>
+            <span className="text-gray-900">Verified on Shelby</span>
           </h1>
 
           {/* Description */}
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12 animate-fade-in">
-            Upload documents, ask questions, and get answers with{' '}
-            <span className="font-semibold text-primary-600">cryptographic proof</span>.
-            Every citation is verifiable on-chain.
+            Your documents meet{' '}
+            <span className="font-semibold text-primary-600">AI intelligence</span>.{' '}
+            Get{' '}
+            <span className="font-semibold text-primary-600">instant answers</span> with{' '}
+            <span className="font-semibold text-primary-600">blockchain-verified</span> sources.{' '}
+            Built on Shelby for unmatched speed and trust.
           </p>
 
           {/* CTA Buttons */}
@@ -79,7 +83,7 @@ export default function HomePage() {
             
             <Link
               href="/chat"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-gray-900 font-semibold border-2 border-gray-200 hover:border-primary-300 hover:bg-gray-50 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white/60 backdrop-blur-sm text-gray-900 font-semibold border-2 border-pink-200 hover:border-primary-300 hover:bg-white/80 transition-all shadow-lg shadow-pink-500/10"
             >
               <Zap className="w-5 h-5" />
               <span>Try Demo</span>
@@ -87,8 +91,13 @@ export default function HomePage() {
           </div>
 
           {/* Features */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {[
+              {
+                icon: Rocket,
+                title: '⚡ Lightning Fast',
+                description: "Powered by Aptos and Shelby's unparalleled speed",
+              },
               {
                 icon: Shield,
                 title: 'Verifiable',
@@ -102,7 +111,7 @@ export default function HomePage() {
               {
                 icon: Zap,
                 title: 'Semantic Search',
-                description: 'Vector-based search powered by OpenAI embeddings',
+                description: 'Vector embeddings find exactly what you need',
               },
             ].map((feature, i) => (
               <div
@@ -141,7 +150,7 @@ export default function HomePage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 placeholder="Search packs by title or tags..."
-                className="w-full px-6 py-4 pr-32 rounded-xl border-2 border-gray-200 focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none transition-all text-lg"
+                className="w-full px-6 py-4 pr-32 rounded-xl border-2 border-pink-200 bg-white/60 backdrop-blur-sm focus:border-primary-500 focus:ring-4 focus:ring-primary-100 focus:bg-white/80 outline-none transition-all text-lg"
               />
               <button
                 onClick={handleSearch}
