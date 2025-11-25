@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Search, Shield, Zap, Package, ArrowRight, Rocket } from 'lucide-react'
+import { Search, Shield, Zap, Package, ArrowRight, Rocket, DollarSign } from 'lucide-react'
 import { discoverPacks, type Pack } from '@/lib/api'
 import { PackCard } from '@/components/PackCard'
 import Link from 'next/link'
@@ -62,12 +62,11 @@ export default function HomePage() {
 
           {/* Description */}
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12 animate-fade-in">
-            Your documents meet{' '}
-            <span className="font-semibold text-primary-600">AI intelligence</span>.{' '}
+            Transform any document pack into an{' '}
+            <span className="font-semibold text-primary-600">AI-powered chatbot</span>.{' '}
             Get{' '}
             <span className="font-semibold text-primary-600">instant answers</span> with{' '}
-            <span className="font-semibold text-primary-600">blockchain-verified</span> sources.{' '}
-            Built on Shelby for unmatched speed and trust.
+            <span className="font-semibold text-primary-600">blockchain-verified</span> sources.
           </p>
 
           {/* CTA Buttons */}
@@ -90,18 +89,27 @@ export default function HomePage() {
             </Link>
           </div>
 
+          {/* Coming Soon Badge */}
+          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-primary-500/10 to-accent-purple/10 backdrop-blur-sm border border-primary-300/50 text-primary-700 text-sm font-medium mb-12 animate-fade-in shadow-lg">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+            </span>
+            <span>Marketplace to buy & sell data packs on-chain coming soon...</span>
+          </div>
+
           {/* Features */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
             {[
               {
                 icon: Rocket,
                 title: '⚡ Lightning Fast',
-                description: "Powered by Aptos and Shelby's unparalleled speed",
+                description: 'AI + Blockchain speed powered by Shelby & Aptos',
               },
               {
                 icon: Shield,
-                title: 'Verifiable',
-                description: 'Every citation includes Shelby blob ID + SHA256 hash',
+                title: 'Blockchain-Verified',
+                description: 'Every answer backed by cryptographic proof',
               },
               {
                 icon: Package,
@@ -112,6 +120,11 @@ export default function HomePage() {
                 icon: Zap,
                 title: 'Semantic Search',
                 description: 'Vector embeddings find exactly what you need',
+              },
+              {
+                icon: DollarSign,
+                title: 'Monetize',
+                description: 'Buy and sell your data pack collections on-chain',
               },
             ].map((feature, i) => (
               <div

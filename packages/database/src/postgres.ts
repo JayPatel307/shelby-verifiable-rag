@@ -190,6 +190,17 @@ export class PostgreSQLDatabase implements DatabaseClient {
     }
   }
 
+  async deletePack(packId: string): Promise<void> {
+    const result = await this.pool.query(
+      'DELETE FROM source_packs WHERE pack_id = $1',
+      [packId]
+    );
+
+    if (result.rowCount === 0) {
+      throw new NotFoundError('Pack');
+    }
+  }
+
   // ====================================================================
   // Document Operations
   // ====================================================================
@@ -231,6 +242,17 @@ export class PostgreSQLDatabase implements DatabaseClient {
     );
 
     return result.rows;
+  }
+
+  async deleteDoc(docId: string): Promise<void> {
+    const result = await this.pool.query(
+      'DELETE FROM docs WHERE doc_id = $1',
+      [docId]
+    );
+
+    if (result.rowCount === 0) {
+      throw new NotFoundError('Document');
+    }
   }
 
   // ====================================================================

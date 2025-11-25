@@ -278,11 +278,13 @@ export interface DatabaseClient {
   listPublicPacks(query?: string): Promise<SourcePack[]>;
   updatePackVisibility(packId: string, visibility: Visibility): Promise<void>;
   updatePackManifest(packId: string, manifestBlobId: string): Promise<void>;
+  deletePack(packId: string): Promise<void>;
 
   // Document operations
   createDoc(doc: Omit<DocRow, 'created_at'>): Promise<DocRow>;
   getDoc(docId: string): Promise<DocRow | null>;
   listDocs(packId: string): Promise<DocRow[]>;
+  deleteDoc(docId: string): Promise<void>;
 
   // Chunk operations
   createChunk(chunk: Omit<ChunkRow, 'created_at'>): Promise<ChunkRow>;

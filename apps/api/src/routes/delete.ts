@@ -24,9 +24,7 @@ export async function deletePack(req: Request, res: Response) {
     }
 
     // Delete pack (cascade will delete docs and chunks)
-    // Note: In production, you might want to also delete from Shelby storage
-    const stmt = (db as any).db.prepare('DELETE FROM source_packs WHERE pack_id = ?');
-    stmt.run(id);
+    await db.deletePack(id);
 
     console.log(`🗑️  Deleted pack: ${id}`);
 
@@ -55,13 +53,14 @@ export async function deleteDocument(req: Request, res: Response) {
       return res.status(403).json({ error: 'Not authorized' });
     }
 
-    // Delete document (cascade will delete chunks)
-    const stmt = (db as any).db.prepare('DELETE FROM docs WHERE doc_id = ? AND pack_id = ?');
-    const result = stmt.run(docId, packId);
-
-    if (result.changes === 0) {
+    // Verify document exists in this pack
+    const doc = await db.getDoc(docId);
+    if (!doc || doc.pack_id !== packId) {
       return res.status(404).json({ error: 'Document not found' });
     }
+
+    // Delete document (cascade will delete chunks)
+    await db.deleteDoc(docId);
 
     console.log(`🗑️  Deleted document: ${docId} from pack: ${packId}`);
 

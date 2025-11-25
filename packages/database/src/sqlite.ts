@@ -154,6 +154,15 @@ export class SQLiteDatabase implements DatabaseClient {
     }
   }
 
+  async deletePack(packId: string): Promise<void> {
+    const stmt = this.db.prepare('DELETE FROM source_packs WHERE pack_id = ?');
+    const result = stmt.run(packId);
+    
+    if (result.changes === 0) {
+      throw new NotFoundError('Pack');
+    }
+  }
+
   // ====================================================================
   // Document Operations
   // ====================================================================
@@ -192,6 +201,15 @@ export class SQLiteDatabase implements DatabaseClient {
       ORDER BY path ASC
     `);
     return stmt.all(packId) as DocRow[];
+  }
+
+  async deleteDoc(docId: string): Promise<void> {
+    const stmt = this.db.prepare('DELETE FROM docs WHERE doc_id = ?');
+    const result = stmt.run(docId);
+    
+    if (result.changes === 0) {
+      throw new NotFoundError('Document');
+    }
   }
 
   // ====================================================================
